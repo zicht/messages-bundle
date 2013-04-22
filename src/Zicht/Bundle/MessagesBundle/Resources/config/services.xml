@@ -1,0 +1,48 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+    <parameters>
+        <parameter key="zicht_messages.entity">Zicht\Bundle\MessagesBundle\Entity\Message</parameter>
+        <parameter key="zicht_messages.translation_cache">%kernel.cache_dir%/translations</parameter>
+        <parameter key="zicht_messages.translation_cache_pattern">catalogue*</parameter>
+    </parameters>
+    <services>
+        <service id="sonata.admin.messages" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
+           <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="Messages"/>
+           <argument />
+           <argument>Zicht\Bundle\MessagesBundle\Entity\Message</argument>
+           <argument>SonataAdminBundle:CRUD</argument>
+           <call method="setTranslationDomain">
+               <argument>MessagesBundle</argument>
+           </call>
+            <call method="addChild">
+                <argument type="service" id="sonata.admin.messagetranslations" />
+            </call>
+       </service>
+       <service id="sonata.admin.messagetranslations" class="Zicht\Bundle\MessagesBundle\Admin\MessageTranslationAdmin">
+           <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label=""/>
+           <argument />
+           <argument>Zicht\Bundle\MessagesBundle\Entity\MessageTranslation</argument>
+           <argument>SonataAdminBundle:CRUD</argument>
+           <call method="setTranslationDomain">
+               <argument>MessagesBundle</argument>
+           </call>
+       </service>
+       <service id="translation.loader.zicht_messages" class="Zicht\Bundle\MessagesBundle\Translation\Loader">
+           <tag name="translation.loader" alias="db" />
+           <call method="setRepository">
+               <argument type="service" id="doctrine" />
+               <argument>%zicht_messages.entity%</argument>
+           </call>
+       </service>
+        <service id="translation.message_update_subscriber" class="Zicht\Bundle\MessagesBundle\Subscriber\FlushCatalogueCacheSubscriber">
+            <tag name="doctrine.event_subscriber" connection="default"/>
+            <argument type="service" id="zicht_messages.flush_cache_helper" />
+            <argument>%zicht_messages.entity%</argument>
+        </service>
+        <service id="zicht_messages.flush_cache_helper" class="Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper">
+            <argument>%zicht_messages.translation_cache%</argument>
+            <argument>%zicht_messages.translation_cache_pattern%</argument>
+        </service>
+   </services>
+</container>

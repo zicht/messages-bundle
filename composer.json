@@ -1,0 +1,22 @@
+{
+    "name": "zicht/messages-bundle",
+    "description": "Zicht Messages bundle",
+    "authors": [
+        {
+            "name": "Zicht online",
+            "email": "info@zicht.nl"
+        }
+    ],
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "Zicht": "src/",
+            "ZichtTest": "tests/"
+        }
+    }
+}

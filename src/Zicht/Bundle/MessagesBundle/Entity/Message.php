@@ -93,6 +93,10 @@ class Message {
                 $this->addTranslations(new MessageTranslation($localeCode, $this->getMessage()));
             }
         }
+
+        foreach ($this->translations as $translation) {
+            $translation->setMessage($this);
+        }
     }
 
 

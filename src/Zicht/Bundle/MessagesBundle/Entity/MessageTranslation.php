@@ -62,4 +62,9 @@ class MessageTranslation {
     function __toString() {
         return (string) $this->translation;
     }
+
+    public function setMessage($message)
+    {
+        $this->message = $message;
+    }
 }

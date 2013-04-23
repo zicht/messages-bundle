@@ -7,7 +7,7 @@
         <parameter key="zicht_messages.translation_cache_pattern">catalogue*</parameter>
     </parameters>
     <services>
-        <service id="sonata.admin.messages" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
+        <service id="zicht_messages.admin.messages" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="Messages"/>
            <argument />
            <argument>Zicht\Bundle\MessagesBundle\Entity\Message</argument>

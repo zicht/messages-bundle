@@ -8,5 +8,6 @@ namespace Zicht\Bundle\MessagesBundle;
 
 use \Symfony\Component\HttpKernel\Bundle\Bundle;
  
-class ZichtMessagesBundle extends Bundle {
+class ZichtMessagesBundle extends Bundle
+{
 }

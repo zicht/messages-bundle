@@ -7,7 +7,7 @@
         <parameter key="zicht_messages.translation_cache_pattern">catalogue*</parameter>
     </parameters>
     <services>
-        <service id="zicht_messages.admin.messages" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
+        <service id="zicht_messages.admin.message" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="Messages"/>
            <argument />
            <argument>Zicht\Bundle\MessagesBundle\Entity\Message</argument>
@@ -16,10 +16,10 @@
                <argument>MessagesBundle</argument>
            </call>
             <call method="addChild">
-                <argument type="service" id="sonata.admin.messagetranslations" />
+                <argument type="service" id="zicht_messages.admin.message_translation" />
             </call>
        </service>
-       <service id="sonata.admin.messagetranslations" class="Zicht\Bundle\MessagesBundle\Admin\MessageTranslationAdmin">
+       <service id="zicht_messages.admin.message_translation" class="Zicht\Bundle\MessagesBundle\Admin\MessageTranslationAdmin">
            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label=""/>
            <argument />
            <argument>Zicht\Bundle\MessagesBundle\Entity\MessageTranslation</argument>

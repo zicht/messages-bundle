@@ -44,7 +44,7 @@ class LoadCommand extends ContainerAwareCommand {
      */
     protected function execute(InputInterface $input, OutputInterface $output) {
         $doctrine = $this->getContainer()->get('doctrine');
-        $em = $doctrine->getEntityManager();
+        $em = $doctrine->getManager();
 
         $filename = $input->getArgument('file');
         $loader = new \Symfony\Component\Translation\Loader\PhpFileLoader();

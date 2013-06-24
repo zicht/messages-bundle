@@ -55,7 +55,7 @@ class AddCommand extends ContainerAwareCommand {
                 }
             }
         }
-        $this->getContainer()->get('doctrine')->getEntityManager()->persist($message);
-        $this->getContainer()->get('doctrine')->getEntityManager()->flush();
+        $this->getContainer()->get('doctrine')->getManager()->persist($message);
+        $this->getContainer()->get('doctrine')->getManager()->flush();
     }
 }

@@ -13,7 +13,7 @@ use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 class Loader implements LoaderInterface {
     function setRepository($doctrine, $entity) {
         // TODO remove dependency on doctrine registry
-        $this->repository = $doctrine->getEntityManager()->getRepository($entity);
+        $this->repository = $doctrine->getManager()->getRepository($entity);
     }
 
 

@@ -36,7 +36,7 @@ class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
     {
         if (!$this->isDirty) {
             /** @var $em \Doctrine\ORM\EntityManager */
-            $em = $args->getManager();
+            $em = $args->getEntityManager();
 
             /** @var $uow \Doctrine\ORM\UnitOfWork */
             $uow = $em->getUnitOfWork();

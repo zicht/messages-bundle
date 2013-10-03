@@ -11,6 +11,7 @@ class MessageRepository extends \Doctrine\ORM\EntityRepository implements Transl
     function getTranslations($locale, $domain) {
         $q = $this
             ->createQueryBuilder('m')
+            ->select('m, t')
             ->join('m.translations', 't')
             ->andWhere('t.locale=:locale')
             ->andWhere('m.domain=:domain')

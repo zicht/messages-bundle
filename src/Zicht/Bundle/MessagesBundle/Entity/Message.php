@@ -24,7 +24,7 @@ class Message {
 
     /** @var array */
     // TODO make this configurable
-    public static $locales = array('en', 'nl');
+    public static $locales = array('en', 'nl', 'fr');
 
     /**
      * @ORM\Id

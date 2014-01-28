@@ -52,7 +52,8 @@ class Message {
      * @ORM\OneToMany(
      *     targetEntity="Zicht\Bundle\MessagesBundle\Entity\MessageTranslation",
      *     mappedBy="message",
-     *     cascade={"persist", "remove"}
+     *     cascade={"persist", "remove"},
+     *     orphanRemoval=true
      * )
      */
     public $translations;

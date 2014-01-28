@@ -15,6 +15,14 @@ use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
  */
 class MessageAdmin extends Admin
 {
+    protected $locales = array('en', 'nl', 'fr');
+
+
+    public function setLocales($locales)
+    {
+        $this->locales = $locales;
+    }
+
     public function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
@@ -107,10 +115,10 @@ class MessageAdmin extends Admin
 
 
     public function prePersist($object) {
-        $object->addMissingTranslations();
+        $object->addMissingTranslations($this->locales);
     }
 
     public function preUpdate($object) {
-        $object->addMissingTranslations();
+        $object->addMissingTranslations($this->locales);
     }
 }

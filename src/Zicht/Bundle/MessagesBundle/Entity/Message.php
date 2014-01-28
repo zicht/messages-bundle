@@ -22,8 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Message {
 
-    /** @var array */
-    // TODO make this configurable
+    /** @var array
+        @deprecated inject this instead.
+     */
     public static $locales = array('en', 'nl', 'fr');
 
     /**
@@ -87,8 +88,8 @@ class Message {
     }
 
 
-    function addMissingTranslations() {
-        foreach (self::$locales as $localeCode) {
+    function addMissingTranslations($locales) {
+        foreach ($locales as $localeCode) {
             if (!$this->hasTranslation($localeCode)) {
                 $this->addTranslations(new MessageTranslation($localeCode, $this->getMessage()));
             }

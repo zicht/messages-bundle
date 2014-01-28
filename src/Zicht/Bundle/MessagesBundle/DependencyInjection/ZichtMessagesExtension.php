@@ -14,7 +14,14 @@ class ZichtMessagesExtension extends Extension
 {
     public function load(array $configs, ContainerBuilder $container)
     {
+        $configuration = new Configuration();
+        $config        = $this->processConfiguration($configuration, $configs);
+
         $loader = new XmlFileLoader($container, new FileLocator(array(__DIR__.'/../Resources/config/')));
         $loader->load('services.xml');
+
+        if (!empty($config['locales'])) {
+            $container->getDefinition('zicht_messages.admin.message')->addMethodCall('setLocales', array($config['locales']));
+        }
     }
 }

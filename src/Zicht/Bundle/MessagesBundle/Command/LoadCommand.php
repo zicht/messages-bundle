@@ -65,7 +65,7 @@ class LoadCommand extends ContainerAwareCommand
         } else {
             $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
 
-            $numLoaded = $this->loadMessages(
+            $numLoaded = $this->getContainer()->get('zicht_messages.manager')->loadMessages(
                 $catalogue,
                 $overwrite,
                 function ($e, $key) use($output) {

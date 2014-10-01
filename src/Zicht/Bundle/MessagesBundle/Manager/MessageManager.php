@@ -11,6 +11,7 @@ use \Symfony\Component\Translation\TranslatorInterface;
 use \Zicht\Bundle\MessagesBundle\Entity\Message;
 use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
+use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
  * Central management service for messages
@@ -85,7 +86,7 @@ class MessageManager
      * @param callable $onError
      * @return int
      */
-    protected function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError)
+    public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError)
     {
         $em = $this->doctrine->getManager();
 
@@ -132,12 +133,24 @@ class MessageManager
     }
 
 
+    /**
+     * Returns the translations repository
+     *
+     * @return TranslationsRepository
+     */
     public function getRepository()
     {
         return $this->doctrine->getRepository('\Zicht\Bundle\MessagesBundle\Entity\Message');
     }
 
 
+    /**
+     * Does some sanity checks
+     *
+     * @param TranslatorInterface $translator
+     * @param string $kernelRoot
+     * @return array
+     */
     public function check(TranslatorInterface $translator, $kernelRoot)
     {
         $issues = array();

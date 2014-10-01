@@ -31,16 +31,18 @@ class CheckCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $issues = $this->getContainer()->get('zicht_messages.manager')->check(
-            $this->getContainer()->get('translator')
+            $this->getContainer()->get('translator'),
+            $this->getContainer()->getParameter('kernel.root_dir')
         );
 
         if (!count($issues)) {
-            $output->writeln('Everything seems ok');
+            $output->writeln('Database translation seem to work ok');
         } else {
             $output->writeln("Some things need your attention:");
             foreach ($issues as $issue) {
                 $output->writeln(" * $issue");
             }
+            $output->writeln("\nPlease remember to flush the cache after any changes you make");
         }
     }
 }

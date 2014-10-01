@@ -138,10 +138,8 @@ class MessageManager
     }
 
 
-    public function check(TranslatorInterface $translator)
+    public function check(TranslatorInterface $translator, $kernelRoot)
     {
-        call_user_func($this->flushHelper);
-
         $issues = array();
         /** @var Message[] $messages */
         $messages = $this->getRepository()->findAll();
@@ -149,13 +147,23 @@ class MessageManager
             foreach ($message->getTranslations() as $translation) {
                 $translator->setLocale($translation->locale);
                 $translated = $translator->trans($message->message, array(), $message->domain);
+
                 if ($translated != $translation->translation) {
-                    $issues[]= sprintf(
-                        "Message '%s' in locale '%s' does not match '%s'",
-                        $message->message,
-                        $translation->locale,
-                        $translated
-                    );
+                    $translationFile = 'Resources/translations/' . $message->domain . '.' . $translation->locale . '.db';
+                    if (!is_file($kernelRoot . '/' . $translationFile)) {
+                        $msg = 'Translation file app/' . $translationFile . ' is missing. This probably causes some messages not to load';
+                        if (!in_array($msg, $issues)) {
+                            $issues[]= $msg;
+                        }
+                    } else {
+                        $issues[]= sprintf(
+                            "Message '%s' in locale '%s' translates as '%s', but '%s' expected",
+                            $message->message,
+                            $translation->locale,
+                            $translated,
+                            $translation->translation
+                        );
+                    }
                 }
             }
         }

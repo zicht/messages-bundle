@@ -6,9 +6,11 @@
 
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use \Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Translation entity
+ *
  * @ORM\Entity
  * @ORM\Table(name="message_translation", uniqueConstraints={
  *  @ORM\UniqueConstraint(
@@ -17,7 +19,8 @@ use Doctrine\ORM\Mapping as ORM;
  *  )
  * })
  */
-class MessageTranslation {
+class MessageTranslation
+{
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -50,19 +53,29 @@ class MessageTranslation {
 
 
     /**
-     * @param $locale
-     * @param $translation
+     * Constructor.
+     *
+     * @param string $locale
+     * @param string $translation
      */
-    function __construct($locale = null, $translation = null) {
+    function __construct($locale = null, $translation = null)
+    {
         $this->locale = $locale;
         $this->translation = $translation;
     }
 
-
-    function __toString() {
-        return (string) $this->translation;
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->translation;
     }
 
+    /**
+     * @param Message $message
+     * @return void
+     */
     public function setMessage($message)
     {
         $this->message = $message;

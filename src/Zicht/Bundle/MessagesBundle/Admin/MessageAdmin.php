@@ -1,28 +1,42 @@
 <?php
+/**
+ * @author Gerard van Helden <gerard@zicht.nl>
+ * @author Rik van der Kemp <rik@zicht.nl>
+ * @copyright Zicht online <http://zicht.nl>
+ */
 
 namespace Zicht\Bundle\MessagesBundle\Admin;
 
-use Sonata\AdminBundle\Admin\Admin;
-use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Datagrid\DatagridMapper;
-use Sonata\AdminBundle\Datagrid\ListMapper;
-use Sonata\AdminBundle\Show\ShowMapper;
+use \Sonata\AdminBundle\Admin\Admin;
+use \Sonata\AdminBundle\Form\FormMapper;
+use \Sonata\AdminBundle\Datagrid\DatagridMapper;
+use \Sonata\AdminBundle\Datagrid\ListMapper;
+use \Sonata\AdminBundle\Show\ShowMapper;
 
-use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use \Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 
 /**
  * Admin for the messages catalogue
  */
 class MessageAdmin extends Admin
 {
-    protected $locales = array('en', 'nl', 'fr');
+    /**
+     * @var MessageManager
+     */
+    protected $messageManager;
 
-
-    public function setLocales($locales)
+    /**
+     * @param MessageManager $messageManager
+     * @return void
+     */
+    public function setMessageManager(MessageManager $messageManager)
     {
-        $this->locales = $locales;
+        $this->messageManager = $messageManager;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
@@ -30,6 +44,9 @@ class MessageAdmin extends Admin
          ;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function configureFormFields(FormMapper $formMapper)
     {
         // add the collection type for existing messages.
@@ -57,7 +74,9 @@ class MessageAdmin extends Admin
         }
     }
 
-
+    /**
+     * @{inheritDoc}
+     */
     public function configureListFields(ListMapper $listMapper)
     {
         $listMapper
@@ -72,6 +91,10 @@ class MessageAdmin extends Admin
         ;
     }
 
+
+    /**
+     * @{inheritDoc}
+     */
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
@@ -96,7 +119,7 @@ class MessageAdmin extends Admin
     public function filteredOnTranslations($queryBuilder, $alias, $field, $value)
     {
         if (!$value) {
-            return;
+            return false;
         }
 
         $queryBuilder->leftJoin(sprintf('%s.translations', $alias), 't');
@@ -110,15 +133,22 @@ class MessageAdmin extends Admin
 
         $queryBuilder->setParameter('tr', '%' . $value['value'] . '%');
 
-        return TRUE;
+        return true;
     }
 
-
-    public function prePersist($object) {
-        $object->addMissingTranslations($this->locales);
+    /**
+     * @{inheritDoc}
+     */
+    public function prePersist($object)
+    {
+        $this->messageManager->addMissingTranslations($object);
     }
 
-    public function preUpdate($object) {
-        $object->addMissingTranslations($this->locales);
+    /**
+     * @{inheritDoc}
+     */
+    public function preUpdate($object)
+    {
+        $this->messageManager->addMissingTranslations($object);
     }
 }

@@ -8,26 +8,28 @@ namespace Zicht\Bundle\MessagesBundle\Command;
 
 use \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Symfony\Component\Translation\Loader\PhpFileLoader;
-use Symfony\Component\Translation\Loader\YamlFileLoader;
-use Symfony\Component\Translation\MessageCatalogueInterface;
-use Symfony\Component\Translation\Translator;
-use Zicht\Bundle\MessagesBundle\Entity\Message;
-use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use \Symfony\Component\Translation\Loader\PhpFileLoader;
+use \Symfony\Component\Translation\Loader\YamlFileLoader;
+use \Symfony\Component\Translation\MessageCatalogueInterface;
+use \Symfony\Component\Translation\Translator;
+use \Symfony\Component\Console\Input\InputArgument;
+use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
+use \Symfony\Component\Console\Output\OutputInterface;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use \Zicht\Bundle\MessagesBundle\Entity\Message;
+use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 
 /**
  * This command loads messages from predefined message configuration files.
  */
-class LoadCommand extends ContainerAwareCommand {
+class LoadCommand extends ContainerAwareCommand
+{
     /**
-     * @{inheritdoc}
+     * @{inheritDoc}
      */
-    protected function configure() {
+    protected function configure()
+    {
         $this
             ->setName('zicht:messages:load')
             ->setDescription('Load messages from a source file')
@@ -43,11 +45,10 @@ class LoadCommand extends ContainerAwareCommand {
 
 
     /**
-     * @{inheritdoc}
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @{inheritDoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
         $filename = $input->getArgument('file');
 
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
@@ -74,52 +75,5 @@ class LoadCommand extends ContainerAwareCommand {
 
             $output->writeln(sprintf("<info>%d</info> messages loaded", $numLoaded));
         }
-    }
-
-
-    protected function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError)
-    {
-        $em = $this->getContainer()->get('doctrine')->getManager();
-
-        $n = 0;
-        foreach ($catalogue->all() as $domain => $messages) {
-            foreach ($messages as $key => $translation) {
-
-                try {
-                    $record = new Message();
-                    $record->message = $key;
-                    $record->domain = $domain;
-                    /** @var Message $existing */
-                    $existing = $em->getRepository('\Zicht\Bundle\MessagesBundle\Entity\Message')->findOneBy(array(
-                        'message' => $key,
-                        'domain' => $domain
-                    ));
-
-                    if ($existing) {
-                        if ($translationEntity = $existing->hasTranslation($catalogue->getLocale())) {
-                            if ($overwrite) {
-                                $translationEntity->translation = $translation;
-                            } else {
-                                continue;
-                            }
-                        } else {
-                            $existing->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation));
-                        }
-                        $record = $existing;
-                    } else {
-                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation));
-                    }
-                    $em->persist($record);
-                    $em->flush();
-
-                    $n ++;
-                } catch (\Exception $e) {
-                    if (is_callable($onError)) {
-                        $onError($e, $key);
-                    }
-                }
-            }
-        }
-        return $n;
     }
 }

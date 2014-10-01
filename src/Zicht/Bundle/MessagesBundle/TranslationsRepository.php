@@ -6,6 +6,19 @@
  
 namespace Zicht\Bundle\MessagesBundle;
 
-interface TranslationsRepository {
-    function getTranslations($locale, $domain);
+/**
+ * Interface TranslationsRepository
+ *
+ * @package Zicht\Bundle\MessagesBundle
+ */
+interface TranslationsRepository
+{
+    /**
+     * Returns all translations for the passed locale and domain.
+     *
+     * @param string $locale
+     * @param string $domain
+     * @return array
+     */
+    public function getTranslations($locale, $domain);
 }

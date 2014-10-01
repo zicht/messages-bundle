@@ -8,21 +8,24 @@ namespace Zicht\Bundle\MessagesBundle\Command;
 
 use \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
+use \Symfony\Component\Console\Input\InputArgument;
+use \Symfony\Component\Console\Input\InputInterface;
+use \Symfony\Component\Console\Input\InputOption;
+use \Symfony\Component\Console\Output\OutputInterface;
 
-use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use \Zicht\Bundle\MessagesBundle\Entity\Message;
+use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 
 /**
  * Add a message to the database message catalogue.
  */
-class AddCommand extends ContainerAwareCommand {
+class AddCommand extends ContainerAwareCommand
+{
     /**
-     * @{inheritdoc}
+     * @{inheritDoc}
      */
-    protected function configure() {
+    protected function configure()
+    {
         $this
             ->setName('zicht:messages:add')
             ->setDescription('Add a message')
@@ -40,15 +43,15 @@ class AddCommand extends ContainerAwareCommand {
 
 
     /**
-     * @{inheritdoc}
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
+     * @{inheritDoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output) {
-        $message = new \Zicht\Bundle\MessagesBundle\Entity\Message();
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $message = new Message();
         $message->message = $input->getArgument('message');
         $message->domain = $input->getArgument('domain');
-        foreach($input->getOption('locale') as $locale) {
+
+        foreach ($input->getOption('locale') as $locale) {
             if ($input->isInteractive()) {
                 if ($translation = $this->getHelperSet()->get('dialog')->ask($output, sprintf('Translation for %s: ', $locale))) {
                     $message->addTranslations(new MessageTranslation($locale, $translation));

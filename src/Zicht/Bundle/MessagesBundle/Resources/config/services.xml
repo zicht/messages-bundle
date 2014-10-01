@@ -7,27 +7,6 @@
         <parameter key="zicht_messages.translation_cache_pattern">catalogue*</parameter>
     </parameters>
     <services>
-        <service id="zicht_messages.admin.message" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
-           <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="Messages"/>
-           <argument />
-           <argument>Zicht\Bundle\MessagesBundle\Entity\Message</argument>
-           <argument>SonataAdminBundle:CRUD</argument>
-           <call method="setTranslationDomain">
-               <argument>MessagesBundle</argument>
-           </call>
-            <call method="addChild">
-                <argument type="service" id="zicht_messages.admin.message_translation" />
-            </call>
-       </service>
-       <service id="zicht_messages.admin.message_translation" class="Zicht\Bundle\MessagesBundle\Admin\MessageTranslationAdmin">
-           <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label=""/>
-           <argument />
-           <argument>Zicht\Bundle\MessagesBundle\Entity\MessageTranslation</argument>
-           <argument>SonataAdminBundle:CRUD</argument>
-           <call method="setTranslationDomain">
-               <argument>MessagesBundle</argument>
-           </call>
-       </service>
        <service id="translation.loader.zicht_messages" class="Zicht\Bundle\MessagesBundle\Translation\Loader">
            <tag name="translation.loader" alias="db" />
            <call method="setRepository">
@@ -43,6 +22,10 @@
         <service id="zicht_messages.flush_cache_helper" class="Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper">
             <argument>%zicht_messages.translation_cache%</argument>
             <argument>%zicht_messages.translation_cache_pattern%</argument>
+        </service>
+        <service id="zicht_messages.manager" class="Zicht\Bundle\MessagesBundle\Manager\MessageManager">
+            <argument type="service" id="doctrine"/>
+            <argument type="service" id="zicht_messages.flush_cache_helper"/>
         </service>
    </services>
 </container>

@@ -5,34 +5,35 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Translation;
 
-use \Doctrine\Bundle\DoctrineBundle\Registry;
 use \Symfony\Component\Translation\MessageCatalogue;
 use \Symfony\Component\Translation\Loader\LoaderInterface;
 
 use \Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
- * Class Loader
+ * Translation loader implementation
  *
  * @package Zicht\Bundle\MessagesBundle\Translation
  */
 class Loader implements LoaderInterface
 {
     /**
+     * Repository used to store and load messages from.
+     *
      * @var TranslationsRepository
      */
     protected $repository;
 
+
     /**
-     * Set the repository instance.
+     * Set the repository to load the messages from.
      *
-     * @param Registry $doctrine
-     * @param string $entity
+     * @param \Zicht\Bundle\MessagesBundle\TranslationsRepository $repo
      * @return void
      */
-    public function setRepository($doctrine, $entity)
+    public function setRepository(TranslationsRepository $repo)
     {
-        $this->repository = $doctrine->getManager()->getRepository($entity);
+        $this->repository = $repo;
     }
 
 

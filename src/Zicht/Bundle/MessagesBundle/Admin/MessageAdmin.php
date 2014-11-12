@@ -50,25 +50,24 @@ class MessageAdmin extends Admin
     public function configureFormFields(FormMapper $formMapper)
     {
         // add the collection type for existing messages.
+        $formMapper
+            ->with('General')
+                ->add('message', NULL, array('required' => TRUE))
+                ->add('domain', NULL, array('required' => TRUE))
+            ->end()
+        ;
         if ($this->getSubject()->getId()) {
             $formMapper
                 ->with('General')
-                    ->add('message', NULL, array('required' => TRUE))
-                    ->add(
-                        'translations',
-                        'sonata_type_collection',
-                        array(),
-                        array(
-                            'edit' => 'inline',
-                            'inline' => 'table',
-                        )
+                ->add(
+                    'translations',
+                    'sonata_type_collection',
+                    array(),
+                    array(
+                        'edit' => 'inline',
+                        'inline' => 'table',
                     )
-                ->end()
-            ;
-        } else {
-            $formMapper
-                ->with('General')
-                    ->add('message', NULL, array('required' => TRUE))
+                )
                 ->end()
             ;
         }

@@ -37,10 +37,16 @@ class FlushCatalogueCacheHelper
         if (is_dir($this->cacheDir)) {
             $finder = new Finder();
 
+            $files = array();
             foreach ($finder->in($this->cacheDir)->files()->name($this->fileNamePattern) as $file) {
                 if (unlink(@$file->getPathname())) {
+                    $files[]= @$file->getPathname();
                     $removed ++;
                 }
+            }
+
+            if (count($files) && is_callable('apc_delete_file')) {
+                apc_delete_file($files);
             }
         }
         return $removed;

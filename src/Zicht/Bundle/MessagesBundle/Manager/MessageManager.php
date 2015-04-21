@@ -11,7 +11,7 @@ use \Symfony\Component\Translation\TranslatorInterface;
 use \Zicht\Bundle\MessagesBundle\Entity\Message;
 use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
-use Zicht\Bundle\MessagesBundle\TranslationsRepository;
+use \Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
  * Central management service for messages
@@ -39,6 +39,7 @@ class MessageManager
      * Constructor
      *
      * @param Registry $doctrine
+     * @param FlushCatalogueCacheHelper $flushHelper
      */
     public function __construct(Registry $doctrine, $flushHelper)
     {

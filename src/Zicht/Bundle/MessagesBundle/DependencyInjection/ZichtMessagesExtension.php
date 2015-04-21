@@ -6,7 +6,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\Reference;
+use \Symfony\Component\DependencyInjection\Reference;
 use \Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use \Symfony\Component\Config\FileLocator;
 use \Symfony\Component\DependencyInjection\Loader\XmlFileLoader;

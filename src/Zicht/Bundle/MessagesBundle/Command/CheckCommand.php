@@ -22,7 +22,10 @@ class CheckCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this->setName('zicht:messages:check');
+        $this
+            ->setName('zicht:messages:check')
+            ->addOption('fix', null, InputOption::VALUE_NONE, 'Fix problems that can be fixed')
+        ;
     }
 
     /**
@@ -40,9 +43,20 @@ class CheckCommand extends ContainerAwareCommand
         } else {
             $output->writeln("Some things need your attention:");
             foreach ($issues as $issue) {
-                $output->writeln(" * $issue");
+                list($description, $fix) = $issue;
+                $output->writeln(" * $description");
+                if ($input->getOption('fix')) {
+                    if ($fix) {
+                        call_user_func($fix, $output);
+                    } else {
+                        $output->writeln("This can not be fixed automatically. Did you flush the cache?");
+                    }
+                }
             }
-            $output->writeln("\nPlease remember to flush the cache after any changes you make");
+            if (!$input->getOption('fix')) {
+                $output->writeln("\nYou may pas the --fix option to try to fix these issues");
+                $output->writeln("Please remember to flush the cache after any changes you make");
+            }
         }
     }
 }

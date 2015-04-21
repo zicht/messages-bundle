@@ -10,15 +10,10 @@ use \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 
 use \Symfony\Component\Translation\Loader\PhpFileLoader;
 use \Symfony\Component\Translation\Loader\YamlFileLoader;
-use \Symfony\Component\Translation\MessageCatalogueInterface;
-use \Symfony\Component\Translation\Translator;
 use \Symfony\Component\Console\Input\InputArgument;
 use \Symfony\Component\Console\Input\InputInterface;
 use \Symfony\Component\Console\Input\InputOption;
 use \Symfony\Component\Console\Output\OutputInterface;
-
-use \Zicht\Bundle\MessagesBundle\Entity\Message;
-use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 
 /**
  * This command loads messages from predefined message configuration files.

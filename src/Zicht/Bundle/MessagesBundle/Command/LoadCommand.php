@@ -6,19 +6,15 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
-use \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
-use \Symfony\Component\Translation\Loader\PhpFileLoader;
-use \Symfony\Component\Translation\Loader\YamlFileLoader;
-use \Symfony\Component\Translation\MessageCatalogueInterface;
-use \Symfony\Component\Translation\Translator;
-use \Symfony\Component\Console\Input\InputArgument;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Output\OutputInterface;
-
-use \Zicht\Bundle\MessagesBundle\Entity\Message;
-use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Translation\Loader\PhpFileLoader;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
+use Symfony\Component\Translation\MessageCatalogueInterface;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * This command loads messages from predefined message configuration files.
@@ -32,17 +28,15 @@ class LoadCommand extends ContainerAwareCommand
     {
         $this
             ->setName('zicht:messages:load')
-            ->setDescription('Load messages from a source file')
+            ->setDescription('Load messages from a source file into the database')
             ->addArgument('file', InputArgument::REQUIRED, 'File to load the messages from')
             ->addOption(
                 'overwrite',
                 'o',
                 InputOption::VALUE_NONE,
                 'Overwrite existing translations in the database (revert to the translation file)'
-            )
-        ;
+            );
     }
-
 
     /**
      * @{inheritDoc}
@@ -68,7 +62,7 @@ class LoadCommand extends ContainerAwareCommand
             $numLoaded = $this->getContainer()->get('zicht_messages.manager')->loadMessages(
                 $catalogue,
                 $overwrite,
-                function ($e, $key) use($output) {
+                function ($e, $key) use ($output) {
                     $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
                 }
             );

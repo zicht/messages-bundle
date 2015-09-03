@@ -6,15 +6,13 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
-use \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
-use \Symfony\Component\Console\Input\InputArgument;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Output\OutputInterface;
-
-use \Zicht\Bundle\MessagesBundle\Entity\Message;
-use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Zicht\Bundle\MessagesBundle\Entity\Message;
+use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 
 /**
  * Add a message to the database message catalogue.
@@ -28,7 +26,7 @@ class AddCommand extends ContainerAwareCommand
     {
         $this
             ->setName('zicht:messages:add')
-            ->setDescription('Add a message')
+            ->setDescription('Add a single message to the database')
             ->addArgument('message', InputArgument::REQUIRED, "The message id")
             ->addArgument('domain', InputArgument::OPTIONAL, "The message domain", 'messages')
             ->addOption(
@@ -37,10 +35,8 @@ class AddCommand extends ContainerAwareCommand
                 InputOption::VALUE_IS_ARRAY | InputOption::VALUE_OPTIONAL,
                 "Locales to add translations for",
                 array()
-            )
-        ;
+            );
     }
-
 
     /**
      * @{inheritDoc}

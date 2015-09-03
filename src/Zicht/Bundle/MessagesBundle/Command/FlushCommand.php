@@ -6,13 +6,10 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
-use \Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use \Symfony\Component\Console\Input\InputArgument;
-use \Symfony\Component\Console\Input\InputInterface;
-use \Symfony\Component\Console\Input\InputOption;
-use \Symfony\Component\Console\Output\OutputInterface;
-
-use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 
 /**
  * This command checks if the guids that are present in the local database correspond with the guids that are used
@@ -27,10 +24,8 @@ class FlushCommand extends ContainerAwareCommand
     {
         $this
             ->setName('zicht:messages:flush')
-            ->setDescription('Flush symfony\'s message catalogue cache')
-        ;
+            ->setDescription('Flush symfony\'s message catalogue cache');
     }
-
 
     /**
      * @{inheritDoc}

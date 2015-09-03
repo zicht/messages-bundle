@@ -29,7 +29,7 @@ class LoadCommand extends ContainerAwareCommand
         $this
             ->setName('zicht:messages:load')
             ->setDescription('Load messages from a source file into the database')
-            ->addArgument('file', InputArgument::REQUIRED, 'File to load the messages from')
+            ->addArgument('file', InputArgument::REQUIRED, 'File to load the messages from.  Filename MUST match the pattern: "NAME.LOCALE.EXTENTION')
             ->addOption(
                 'overwrite',
                 'o',
@@ -67,7 +67,7 @@ class LoadCommand extends ContainerAwareCommand
                 }
             );
 
-            $output->writeln(sprintf("<info>%d</info> messages loaded", $numLoaded));
+            $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
         }
     }
 }

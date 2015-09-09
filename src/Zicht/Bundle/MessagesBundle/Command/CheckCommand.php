@@ -24,7 +24,9 @@ class CheckCommand extends ContainerAwareCommand
     {
         $this
             ->setName('zicht:messages:check')
-            ->setDescription('Check whether the database translations are working');
+            ->setDescription('Check whether the database translations are working')
+            ->addOption('fix', '', InputOption::VALUE_NONE, 'Try to fix whatever can be fixed')
+        ;
 }
 
     /**
@@ -34,7 +36,8 @@ class CheckCommand extends ContainerAwareCommand
     {
         $issues = $this->getContainer()->get('zicht_messages.manager')->check(
             $this->getContainer()->get('translator'),
-            $this->getContainer()->getParameter('kernel.root_dir')
+            $this->getContainer()->getParameter('kernel.root_dir'),
+            $input->getOption('fix')
         );
 
         if (!count($issues)) {

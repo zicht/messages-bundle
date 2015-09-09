@@ -151,7 +151,7 @@ class MessageManager
      * @param string $kernelRoot
      * @return array
      */
-    public function check(TranslatorInterface $translator, $kernelRoot)
+    public function check(TranslatorInterface $translator, $kernelRoot, $fix = false)
     {
         $issues = array();
         /** @var Message[] $messages */
@@ -161,22 +161,27 @@ class MessageManager
                 $translator->setLocale($translation->locale);
                 $translated = $translator->trans($message->message, array(), $message->domain);
 
-                if ($translated != $translation->translation) {
-                    $translationFile = 'Resources/translations/' . $message->domain . '.' . $translation->locale . '.db';
-                    if (!is_file($kernelRoot . '/' . $translationFile)) {
-                        $msg = 'Translation file app/' . $translationFile . ' is missing. This probably causes some messages not to load';
-                        if (!in_array($msg, $issues)) {
-                            $issues[]= $msg;
-                        }
+                $translationFile = 'Resources/translations/' . $message->domain . '.' . $translation->locale . '.db';
+                if (!is_file($kernelRoot . '/' . $translationFile)) {
+                    if ($fix) {
+                        touch($kernelRoot . '/' . $translationFile);
+                        $msg = 'Translation file app/' . $translationFile . ' created';
                     } else {
-                        $issues[]= sprintf(
-                            "Message '%s' in locale '%s' translates as '%s', but '%s' expected",
-                            $message->message,
-                            $translation->locale,
-                            $translated,
-                            $translation->translation
-                        );
+                        $msg = 'Translation file app/' . $translationFile . ' is missing. This probably causes some messages not to load';
                     }
+                    if (!in_array($msg, $issues)) {
+                        $issues[]= $msg;
+                    }
+                }
+                if ($translated != $translation->translation) {
+                    $issues[]= sprintf(
+                        "Message '%s' from domain '%s' in locale '%s' translates as '%s', but '%s' expected",
+                        $message->message,
+                        $message->domain,
+                        $translation->locale,
+                        $translated,
+                        $translation->translation
+                    );
                 }
             }
         }

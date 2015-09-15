@@ -90,7 +90,9 @@ class MessageManager
     {
         $em = $this->doctrine->getManager();
 
+        $em->getConnection()->beginTransaction();
         $n = 0;
+        $this->flushHelper->setEnabled(false);
         foreach ($catalogue->all() as $domain => $messages) {
             foreach ($messages as $key => $translation) {
 
@@ -129,6 +131,9 @@ class MessageManager
                 }
             }
         }
+        $em->getConnection()->commit();
+
+        call_user_func($this->flushHelper);
         return $n;
     }
 

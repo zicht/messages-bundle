@@ -23,6 +23,18 @@ class FlushCatalogueCacheHelper
     {
         $this->cacheDir = $cacheDir;
         $this->fileNamePattern = $fileNamePattern;
+        $this->isEnabled = true;
+    }
+
+
+    /**
+     * Change whether or not the helper should be enabled
+     *
+     * @param $enabled
+     */
+    public function setEnabled($enabled)
+    {
+        $this->isEnabled = (bool)$enabled;
     }
 
 
@@ -33,6 +45,10 @@ class FlushCatalogueCacheHelper
      */
     public function __invoke()
     {
+        if (!$this->isEnabled) {
+            return -1;
+        }
+
         $removed = 0;
         if (is_dir($this->cacheDir)) {
             $finder = new Finder();

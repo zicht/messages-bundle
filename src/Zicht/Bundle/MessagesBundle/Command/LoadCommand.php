@@ -45,18 +45,16 @@ class LoadCommand extends ContainerAwareCommand
     {
         $files = $input->getArgument('file');
         $overwrite = $input->getOption('overwrite');
+        $loaders = array(
+            'php' => new PhpFileLoader(),
+            'yml' => new YamlFileLoader()
+        );
 
         $messageManager = $this->getContainer()->get('zicht_messages.manager');
 
-        $messageManager->transactional(function() use($files, $overwrite, $output, $messageManager) {
+        $messageManager->transactional(function() use($files, $loaders, $overwrite, $output, $messageManager) {
             foreach ($files as $filename) {
                 $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
-                $loaders = array(
-                    'php' => new PhpFileLoader(),
-                    'yml' => new YamlFileLoader()
-                );
-
 
                 if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
                     $output->writeln('Unsupported file type: ' . $filename);

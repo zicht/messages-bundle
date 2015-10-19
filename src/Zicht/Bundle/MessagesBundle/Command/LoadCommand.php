@@ -29,7 +29,7 @@ class LoadCommand extends ContainerAwareCommand
         $this
             ->setName('zicht:messages:load')
             ->setDescription('Load messages from a source file into the database')
-            ->addArgument('file', InputArgument::REQUIRED, 'File to load the messages from.  Filename MUST match the pattern: "NAME.LOCALE.EXTENTION')
+            ->addArgument('file', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'File to load the messages from.  Filename MUST match the pattern: "NAME.LOCALE.EXTENTION')
             ->addOption(
                 'overwrite',
                 'o',
@@ -43,31 +43,38 @@ class LoadCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $filename = $input->getArgument('file');
-
-        $ext = pathinfo($filename, PATHINFO_EXTENSION);
-        $loaders = array(
-            'php' => new PhpFileLoader(),
-            'yml' => new YamlFileLoader()
-        );
-
+        $files = $input->getArgument('file');
         $overwrite = $input->getOption('overwrite');
 
-        if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
-            $output->writeln('Unsupported file type: ' . $filename);
-            return 1;
-        } else {
-            $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
+        $messageManager = $this->getContainer()->get('zicht_messages.manager');
 
-            $numLoaded = $this->getContainer()->get('zicht_messages.manager')->loadMessages(
-                $catalogue,
-                $overwrite,
-                function ($e, $key) use ($output) {
-                    $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
+        $messageManager->transactional(function() use($files, $overwrite, $output, $messageManager) {
+            foreach ($files as $filename) {
+                $ext = pathinfo($filename, PATHINFO_EXTENSION);
+
+                $loaders = array(
+                    'php' => new PhpFileLoader(),
+                    'yml' => new YamlFileLoader()
+                );
+
+
+                if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
+                    $output->writeln('Unsupported file type: ' . $filename);
+                    return 1;
+                } else {
+                    $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
+
+                    $numLoaded = $messageManager->loadMessages(
+                        $catalogue,
+                        $overwrite,
+                        function ($e, $key) use ($output) {
+                            $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
+                        }
+                    );
+
+                    $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
                 }
-            );
-
-            $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
-        }
+            }
+        });
     }
 }

@@ -78,6 +78,19 @@ class MessageManager
     }
 
 
+    public function transactional($callback)
+    {
+        $n = 0;
+        $em = $this->doctrine->getManager();
+        $em->getConnection()->beginTransaction();
+
+        $callback($n);
+
+        $em->getConnection()->commit();
+        call_user_func($this->flushHelper);
+        return $n;
+    }
+
     /**
      * Imports messages into the translation repository.
      *
@@ -88,14 +101,11 @@ class MessageManager
      */
     public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError)
     {
-        $em = $this->doctrine->getManager();
-
-        $em->getConnection()->beginTransaction();
         $n = 0;
-        $this->flushHelper->setEnabled(false);
+
+        $em = $this->doctrine->getManager();
         foreach ($catalogue->all() as $domain => $messages) {
             foreach ($messages as $key => $translation) {
-
                 try {
                     $record = new Message();
                     $record->message = $key;
@@ -131,9 +141,7 @@ class MessageManager
                 }
             }
         }
-        $em->getConnection()->commit();
-
-        call_user_func($this->flushHelper);
+        
         return $n;
     }
 

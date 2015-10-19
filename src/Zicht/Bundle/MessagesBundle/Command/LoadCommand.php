@@ -58,7 +58,6 @@ class LoadCommand extends ContainerAwareCommand
 
                 if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
                     $output->writeln('Unsupported file type: ' . $filename);
-                    return 1;
                 } else {
                     $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
 

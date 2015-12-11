@@ -5,33 +5,46 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Translation;
 
-use Symfony\Component\Translation\MessageCatalogue;
-use Symfony\Component\Translation\Loader\LoaderInterface;
+use \Symfony\Component\Translation\MessageCatalogue;
+use \Symfony\Component\Translation\Loader\LoaderInterface;
 
-use Zicht\Bundle\MessagesBundle\TranslationsRepository;
+use \Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
-class Loader implements LoaderInterface {
-    function setRepository($doctrine, $entity) {
-        // TODO remove dependency on doctrine registry
-        $this->repository = $doctrine->getManager()->getRepository($entity);
+/**
+ * Translation loader implementation
+ *
+ * @package Zicht\Bundle\MessagesBundle\Translation
+ */
+class Loader implements LoaderInterface
+{
+    /**
+     * Repository used to store and load messages from.
+     *
+     * @var TranslationsRepository
+     */
+    protected $repository;
+
+
+    /**
+     * Set the repository to load the messages from.
+     *
+     * @param \Zicht\Bundle\MessagesBundle\TranslationsRepository $repo
+     * @return void
+     */
+    public function setRepository(TranslationsRepository $repo)
+    {
+        $this->repository = $repo;
     }
 
 
     /**
-     * Loads a locale.
-     *
-     * @param  mixed  $resource A resource
-     * @param  string $locale   A locale
-     * @param  string $domain   The domain
-     *
-     * @return MessageCatalogue A MessageCatalogue instance
-     *
-     * @api
+     * @{inheritDoc}
      */
-    function load($resource, $locale, $domain = 'messages') {
+    public function load($resource, $locale, $domain = 'messages')
+    {
         $catalogue = new MessageCatalogue($locale);
 
-        foreach($this->repository->getTranslations($locale, $domain) as $id => $translation) {
+        foreach ($this->repository->getTranslations($locale, $domain) as $id => $translation) {
             $catalogue->set($id, $translation, $domain);
         }
 

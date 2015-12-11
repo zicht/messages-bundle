@@ -3,12 +3,15 @@
  * @author Gerard van Helden <gerard@zicht.nl>
  * @copyright Zicht Online <http://zicht.nl>
  */
- 
+
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use \Doctrine\Common\Collections\ArrayCollection;
+use \Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Message entity
+ *
  * @ORM\Entity(repositoryClass="Zicht\Bundle\MessagesBundle\Entity\MessageRepository")
  * @ORM\Table(
  *    name="message",
@@ -20,13 +23,8 @@ use Doctrine\ORM\Mapping as ORM;
  *    }
  * )
  */
-class Message {
-
-    /** @var array
-        @deprecated inject this instead.
-     */
-    public static $locales = array('en', 'nl', 'fr');
-
+class Message
+{
     /**
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO");
@@ -58,28 +56,50 @@ class Message {
      */
     public $translations;
 
+    /**
+     * Constructor
+     */
     public function __construct()
     {
-        $this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->translations = new ArrayCollection();
     }
 
 
-    public function __toString() {
-        return sprintf('%s [%d]', (string) $this->message, $this->id);
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return sprintf('%s [%d]', (string)$this->message, $this->id);
     }
 
 
-    public function getMessage() {
+    /**
+     * @return mixed
+     */
+    public function getMessage()
+    {
         return $this->message;
     }
 
 
-    public function getTranslations() {
+    /**
+     * @return MessageTranslation[]
+     */
+    public function getTranslations()
+    {
         return $this->translations;
     }
 
 
-    public function hasTranslation($locale) {
+    /**
+     * Checks if the translation for the specified locale exists.
+     *
+     * @param string $locale
+     * @return bool
+     */
+    public function hasTranslation($locale)
+    {
         foreach ($this->translations as $translation) {
             if ($locale == $translation->locale) {
                 return $translation;
@@ -89,7 +109,14 @@ class Message {
     }
 
 
-    function addMissingTranslations($locales) {
+    /**
+     * Adds missing translations
+     *
+     * @param array $locales
+     * @return void
+     */
+    public function addMissingTranslations($locales)
+    {
         foreach ($locales as $localeCode) {
             if (!$this->hasTranslation($localeCode)) {
                 $this->addTranslations(new MessageTranslation($localeCode, $this->getMessage()));
@@ -102,46 +129,52 @@ class Message {
     }
 
 
-
-    public function getTranslation($locale) {
+    /**
+     * @param string $locale
+     * @return bool
+     */
+    public function getTranslation($locale)
+    {
         return $this->hasTranslation($locale);
     }
 
 
-
-    public function addTranslations(MessageTranslation $translation) {
+    /**
+     * Add a translation
+     *
+     * @param MessageTranslation $translation
+     * @return void
+     */
+    public function addTranslations(MessageTranslation $translation)
+    {
         $translation->message = $this;
-        $this->translations[]= $translation;
+        $this->translations[] = $translation;
     }
 
 
-    public function setId($id) {
-        $this->id = $id;
-    }
-
-    public function getId() {
+    /**
+     * @return mixed
+     */
+    public function getId()
+    {
         return $this->id;
     }
 
     /**
-     * @param  $type
+     * @param string $message
+     * @return void
      */
-    public function setType($type) {
-        $this->type = $type;
-    }
-
-    /**
-     * @return
-     */
-    public function getType() {
-        return $this->type;
-    }
-
-    public function setMessage($message) {
+    public function setMessage($message)
+    {
         $this->message = $message;
     }
 
-    public function setTranslations($translations) {
+    /**
+     * @param MessageTranslation[] $translations
+     * @return void
+     */
+    public function setTranslations($translations)
+    {
         $this->translations = $translations;
     }
 
@@ -149,6 +182,7 @@ class Message {
      * Set domain
      *
      * @param string $domain
+     * @return void
      */
     public function setDomain($domain)
     {
@@ -158,7 +192,7 @@ class Message {
     /**
      * Get domain
      *
-     * @return string 
+     * @return string
      */
     public function getDomain()
     {

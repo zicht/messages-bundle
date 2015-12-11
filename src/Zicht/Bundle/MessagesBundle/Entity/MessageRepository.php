@@ -5,10 +5,25 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
-use Zicht\Bundle\MessagesBundle\TranslationsRepository;
+use \Doctrine\ORM\EntityRepository;
+use \Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
-class MessageRepository extends \Doctrine\ORM\EntityRepository implements TranslationsRepository {
-    function getTranslations($locale, $domain) {
+/**
+ * Class MessageRepository
+ *
+ * @package Zicht\Bundle\MessagesBundle\Entity
+ */
+class MessageRepository extends EntityRepository implements TranslationsRepository
+{
+    /**
+     * Returns all translations for the specified domain
+     *
+     * @param string $locale
+     * @param string $domain
+     * @return array
+     */
+    public function getTranslations($locale, $domain)
+    {
         $q = $this
             ->createQueryBuilder('m')
             ->select('m, t')

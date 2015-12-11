@@ -5,17 +5,21 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Subscriber;
 
-use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper as Helper;
+use \Doctrine\Common\EventSubscriber;
+use \Doctrine\ORM\Events;
+use \Zicht\Bundle\MessagesBundle\Entity;
+use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper as Helper;
+use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 
 /**
  * Subscribes to the Doctrine entity manager to flush Symfony's translation cache
  */
-class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
+class FlushCatalogueCacheSubscriber implements EventSubscriber
 {
     /**
      * Construct the subscriber with the passed cachedir.
      *
-     * @param callback $helper
+     * @param FlushCatalogueCacheHelper $helper
      * @param array $entities
      */
     public function __construct(Helper $helper, $entities)
@@ -30,7 +34,8 @@ class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
      * Listens to the flush event and checks if any of the configured entities was inserted, updated or deleted.
      * If so, invokes the helper to
      *
-     * @param $args
+     * @param mixed $args
+     * @return void
      */
     public function onFlush($args)
     {
@@ -41,7 +46,7 @@ class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
             /** @var $uow \Doctrine\ORM\UnitOfWork */
             $uow = $em->getUnitOfWork();
 
-            foreach(
+            foreach (
                 array(
                     $uow->getScheduledEntityUpdates(),
                     $uow->getScheduledEntityDeletions(),
@@ -53,8 +58,8 @@ class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
                 ) as $obj) {
                 foreach ($obj as $element) {
                     if (
-                        $element instanceof \Zicht\Bundle\MessagesBundle\Entity\Message
-                     || $element instanceof \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation
+                        $element instanceof Entity\Message
+                     || $element instanceof Entity\MessageTranslation
                     ) {
                         $this->isDirty = true;
                         break 2;
@@ -65,6 +70,11 @@ class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
         $this->flushCache();
     }
 
+    /**
+     * Invokes the cache flusher.
+     *
+     * @return void
+     */
     public function flushCache()
     {
         call_user_func($this->helper);
@@ -72,10 +82,11 @@ class FlushCatalogueCacheSubscriber implements \Doctrine\Common\EventSubscriber
     }
 
 
+    /**
+     * @{inheritDoc}
+     */
     public function getSubscribedEvents()
     {
-        return array(
-            \Doctrine\ORM\Events::onFlush,
-        );
+        return array(Events::onFlush);
     }
 }

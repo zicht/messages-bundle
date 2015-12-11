@@ -6,17 +6,21 @@
 
 namespace Zicht\Bundle\MessagesBundle\Helper;
 
+use \Symfony\Component\Finder\Finder;
+
 /**
  * Helper class to flush the catalogue cache
  */
-class FlushCatalogueCacheHelper {
+class FlushCatalogueCacheHelper
+{
     /**
      * Initialize the helper with the specified cache dir and filename
      *
      * @param string $cacheDir
      * @param string $fileNamePattern
      */
-    function __construct($cacheDir, $fileNamePattern = 'catalogue*') {
+    public function __construct($cacheDir, $fileNamePattern = 'catalogue*')
+    {
         $this->cacheDir = $cacheDir;
         $this->fileNamePattern = $fileNamePattern;
     }
@@ -24,14 +28,22 @@ class FlushCatalogueCacheHelper {
 
     /**
      * Removes all files from the cache dir, matching the configured pattern
+     *
+     * @return int
      */
-    function __invoke() {
+    public function __invoke()
+    {
         $removed = 0;
         if (is_dir($this->cacheDir)) {
-            $finder = new \Symfony\Component\Finder\Finder();
+            $finder = new Finder();
 
-            foreach($finder->in($this->cacheDir)->files()->name($this->fileNamePattern) as $file) {
+            $files = array();
+            foreach ($finder->in($this->cacheDir)->files()->name($this->fileNamePattern) as $file) {
+                if (is_callable('apc_delete_file')) {
+                    apc_delete_file(@$file->getPathname());
+                }
                 if (unlink(@$file->getPathname())) {
+                    $files[]= @$file->getPathname();
                     $removed ++;
                 }
             }

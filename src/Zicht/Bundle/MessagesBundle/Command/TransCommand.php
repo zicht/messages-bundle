@@ -8,7 +8,6 @@ namespace Zicht\Bundle\MessagesBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -34,12 +33,16 @@ class TransCommand extends ContainerAwareCommand
     {
         $translator = $this->getContainer()->get('translator');
         $domains = ['template', 'messages', 'forms'];
-        foreach ($domains as $domain) {
-            $output->writeln(sprintf(
-                '%13s "%s" -> "%s"',
-                sprintf('[%s]', $domain),
-                $input->getArgument('string'),
-                $translator->trans($input->getArgument('string'), [], $domain)));
+        $locales = ['nl', 'en'];
+
+        foreach ($locales as $locale) {
+            foreach ($domains as $domain) {
+                $output->writeln(sprintf(
+                    '%15s "%s" -> "%s"',
+                    sprintf('[%s-%s]', $domain, $locale),
+                    $input->getArgument('string'),
+                    $translator->trans($input->getArgument('string'), [], $domain, $locale)));
+            }
         }
     }
 }

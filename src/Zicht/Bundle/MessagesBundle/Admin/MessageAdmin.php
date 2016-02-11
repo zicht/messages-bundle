@@ -80,6 +80,7 @@ class MessageAdmin extends Admin
     {
         $listMapper
             ->addIdentifier('message')
+            ->add('domain')
             ->add('_action', 'actions', array(
                 'actions' => array(
                     'show' => array(),
@@ -97,6 +98,7 @@ class MessageAdmin extends Admin
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
+            ->add('domain')
             ->add('message', 'doctrine_orm_callback', array(
                 'callback'   => array($this, 'filteredOnTranslations')
             )
@@ -117,7 +119,7 @@ class MessageAdmin extends Admin
      */
     public function filteredOnTranslations($queryBuilder, $alias, $field, $value)
     {
-        if (!$value) {
+        if (!$value['value']) {
             return false;
         }
 

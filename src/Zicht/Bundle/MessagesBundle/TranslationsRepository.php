@@ -21,4 +21,11 @@ interface TranslationsRepository
      * @return array
      */
     public function getTranslations($locale, $domain);
+
+    /**
+     * Returns all domains that are defined in the database
+     *
+     * @return array
+     */
+    public function getDomains();
 }

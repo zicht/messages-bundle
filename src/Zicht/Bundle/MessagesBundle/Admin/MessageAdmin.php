@@ -53,7 +53,7 @@ class MessageAdmin extends Admin
         $formMapper
             ->with('General')
                 ->add('message', NULL, array('required' => TRUE))
-                ->add('domain', NULL, array('required' => TRUE))
+                ->add('domain', 'choice', array('required' => TRUE, 'choices' => $this->messageManager->getRepository()->getDomains()))
             ->end()
         ;
         if ($this->getSubject()->getId()) {
@@ -98,7 +98,7 @@ class MessageAdmin extends Admin
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('domain')
+            ->add('domain', null, array(), 'choice', array('choices' => $this->messageManager->getRepository()->getDomains()))
             ->add('message', 'doctrine_orm_callback', array(
                 'callback'   => array($this, 'filteredOnTranslations')
             )

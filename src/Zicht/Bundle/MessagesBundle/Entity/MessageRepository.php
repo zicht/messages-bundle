@@ -42,4 +42,24 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
 
         return $ret;
     }
+
+    /**
+     * Returns all domains that are defined in the database
+     *
+     * @return array
+     */
+    public function getDomains()
+    {
+        $q = $this
+            ->createQueryBuilder('m')
+            ->select('m.domain')
+            ->distinct()
+            ->orderBy('m.domain')
+        ;
+        $ret = array();
+        foreach ($q->getQuery()->execute() as $result) {
+            $ret[$result['domain']] = $result['domain'];
+        }
+        return $ret;
+    }
 }

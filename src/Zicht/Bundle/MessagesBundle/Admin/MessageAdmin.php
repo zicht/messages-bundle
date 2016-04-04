@@ -122,10 +122,10 @@ class MessageAdmin extends Admin
         if (!$value['value']) {
             return false;
         }
-
+        
         $queryBuilder->leftJoin(sprintf('%s.translations', $alias), 't');
 
-        $queryBuilder->where(
+        $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
                 $queryBuilder->expr()->like('o.message', ':tr'),
                 $queryBuilder->expr()->like('t.translation', ':tr')

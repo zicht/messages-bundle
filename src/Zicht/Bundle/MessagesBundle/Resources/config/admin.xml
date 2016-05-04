@@ -3,25 +3,28 @@
            xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <services>
         <service id="zicht_messages.admin.message" class="Zicht\Bundle\MessagesBundle\Admin\MessageAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="Messages"/>
+            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="admin.label.messages_admin" label_translator_strategy="sonata.admin.label.strategy.underscore"/>
             <argument/>
             <argument>%zicht_messages.entity%</argument>
             <argument>SonataAdminBundle:CRUD</argument>
-            <call method="setTranslationDomain">
-                <argument>MessagesBundle</argument>
-            </call>
             <call method="addChild">
                 <argument type="service" id="zicht_messages.admin.message_translation"/>
+            </call>
+            <call method="setTranslationDomain">
+                <argument>admin</argument>
             </call>
         </service>
         <service id="zicht_messages.admin.message_translation"
                  class="Zicht\Bundle\MessagesBundle\Admin\MessageTranslationAdmin">
-            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label=""/>
+            <tag name="sonata.admin" manager_type="orm" group="Concertgebouw" label="admin.label.messages_translation_admin" label_translator_strategy="sonata.admin.label.strategy.underscore"/>
             <argument/>
             <argument>Zicht\Bundle\MessagesBundle\Entity\MessageTranslation</argument>
             <argument>SonataAdminBundle:CRUD</argument>
             <call method="setTranslationDomain">
                 <argument>MessagesBundle</argument>
+            </call>
+            <call method="setTranslationDomain">
+                <argument>admin</argument>
             </call>
         </service>
     </services>

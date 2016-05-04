@@ -1,0 +1,16 @@
+admin.label:
+    messages_admin: Messages
+
+list:
+    label_message: Message
+    label_domain: Message domain
+
+filter:
+    label_message: Message
+    label_domain: Message domain
+
+form:
+    label_message: Message
+    label_domain: Message domain
+    label_translation: Translation
+    label_locale: Locale

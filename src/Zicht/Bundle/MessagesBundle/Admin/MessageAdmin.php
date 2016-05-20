@@ -7,13 +7,14 @@
 
 namespace Zicht\Bundle\MessagesBundle\Admin;
 
-use \Sonata\AdminBundle\Admin\Admin;
-use \Sonata\AdminBundle\Form\FormMapper;
-use \Sonata\AdminBundle\Datagrid\DatagridMapper;
-use \Sonata\AdminBundle\Datagrid\ListMapper;
-use \Sonata\AdminBundle\Show\ShowMapper;
-
-use \Zicht\Bundle\MessagesBundle\Manager\MessageManager;
+use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Form\FormMapper;
+use Sonata\AdminBundle\Show\ShowMapper;
+use Zicht\Bundle\MessagesBundle\Entity\Message;
+use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 
 /**
  * Admin for the messages catalogue
@@ -139,17 +140,23 @@ class MessageAdmin extends Admin
 
     /**
      * @{inheritDoc}
+     * @var Message $object
      */
     public function prePersist($object)
     {
-        $this->messageManager->addMissingTranslations($object);
+        $this->preUpdate($object);
     }
 
     /**
      * @{inheritDoc}
+     * @var Message $object
      */
     public function preUpdate($object)
     {
         $this->messageManager->addMissingTranslations($object);
+        foreach ($object->getTranslations() as $translation) {
+            $translation->setState(MessageTranslation::STATE_USER);
+            $translation->setTranslation((string)$translation->getTranslation());
+        }
     }
 }

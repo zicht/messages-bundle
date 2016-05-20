@@ -14,3 +14,13 @@ form:
     label_domain: Message domain
     label_translation: Translation
     label_locale: Locale
+    label_state: State
+
+breadcrumb:
+    link_message_list: Messages
+
+message:
+    state:
+        unknown: Unknown
+        import: Imported
+        user: Changed

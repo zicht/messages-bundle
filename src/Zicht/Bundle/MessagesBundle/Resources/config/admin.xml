@@ -20,8 +20,8 @@
             <argument/>
             <argument>Zicht\Bundle\MessagesBundle\Entity\MessageTranslation</argument>
             <argument>SonataAdminBundle:CRUD</argument>
-            <call method="setTranslationDomain">
-                <argument>MessagesBundle</argument>
+            <call method="setTranslator">
+                <argument type="service" id="translator"/>
             </call>
             <call method="setTranslationDomain">
                 <argument>admin</argument>

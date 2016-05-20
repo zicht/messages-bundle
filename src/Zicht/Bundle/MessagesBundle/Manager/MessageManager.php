@@ -77,7 +77,6 @@ class MessageManager
         $message->addMissingTranslations($this->locales);
     }
 
-
     public function transactional($callback)
     {
         $n = 0;
@@ -95,13 +94,18 @@ class MessageManager
      * Imports messages into the translation repository.
      *
      * @param MessageCatalogueInterface $catalogue
-     * @param bool $overwrite
+     * @param bool|array $overwrite
      * @param callable $onError
      * @return int
      */
-    public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError)
+    public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError, $state = MessageTranslation::STATE_IMPORT)
     {
         $n = 0;
+        $overwrite = array(
+            MessageTranslation::STATE_UNKNOWN => is_array($overwrite) && array_key_exists(MessageTranslation::STATE_UNKNOWN, $overwrite) ? $overwrite[MessageTranslation::STATE_UNKNOWN] : false,
+            MessageTranslation::STATE_IMPORT => is_array($overwrite) && array_key_exists(MessageTranslation::STATE_IMPORT, $overwrite) ? $overwrite[MessageTranslation::STATE_IMPORT] : false,
+            MessageTranslation::STATE_USER => is_array($overwrite) && array_key_exists(MessageTranslation::STATE_USER, $overwrite) ? $overwrite[MessageTranslation::STATE_USER] : false,
+        );
 
         $em = $this->doctrine->getManager();
         foreach ($catalogue->all() as $domain => $messages) {
@@ -118,17 +122,18 @@ class MessageManager
 
                     if ($existing) {
                         if ($translationEntity = $existing->hasTranslation($catalogue->getLocale())) {
-                            if ($overwrite) {
+                            if (array_key_exists($translationEntity->getState(), $overwrite) && $overwrite[$translationEntity->getState()]) {
                                 $translationEntity->translation = $translation;
+                                $translationEntity->state = $state;
                             } else {
                                 continue;
                             }
                         } else {
-                            $existing->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation));
+                            $existing->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
                         }
                         $record = $existing;
                     } else {
-                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation));
+                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
                     }
                     $em->persist($record);
                     $em->flush();

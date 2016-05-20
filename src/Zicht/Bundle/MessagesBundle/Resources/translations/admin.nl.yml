@@ -14,3 +14,13 @@ form:
     label_domain: Vertaling domein
     label_translation: Vertaling
     label_locale: Taal
+    label_state: Status
+
+breadcrumb:
+    link_message_list: Template Titels En Teksten
+
+message:
+    state:
+        unknown: Onbekend
+        import: Geimporteerd
+        user: Aangepast

@@ -26,6 +26,7 @@ use \Doctrine\ORM\Mapping as ORM;
 class Message
 {
     /**
+     * @var integer
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO");
      * @ORM\Column(type="integer")
@@ -34,17 +35,16 @@ class Message
 
 
     /**
+     * @var string
      * @ORM\Column(type="string", length=255)
      */
     public $message;
 
-
     /**
+     * @var string
      * @ORM\Column(type="string", length=64)
-     * @var
      */
     public $domain = 'messages';
-
 
     /**
      * @ORM\OneToMany(
@@ -127,7 +127,6 @@ class Message
             $translation->setMessage($this);
         }
     }
-
 
     /**
      * @param string $locale

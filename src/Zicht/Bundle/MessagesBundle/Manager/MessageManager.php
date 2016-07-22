@@ -5,12 +5,12 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Manager;
 
-use \Doctrine\Bundle\DoctrineBundle\Registry;
-use \Symfony\Component\Translation\MessageCatalogueInterface;
-use \Symfony\Component\Translation\TranslatorInterface;
-use \Zicht\Bundle\MessagesBundle\Entity\Message;
-use \Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
-use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
+use Doctrine\Bundle\DoctrineBundle\Registry;
+use Symfony\Component\Translation\MessageCatalogueInterface;
+use Symfony\Component\Translation\TranslatorInterface;
+use Zicht\Bundle\MessagesBundle\Entity\Message;
+use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
@@ -26,7 +26,7 @@ class MessageManager
     private $locales;
 
     /**
-     * @var \Doctrine\Bundle\DoctrineBundle\Registry
+     * @var Registry
      */
     private $doctrine;
 

@@ -5,8 +5,8 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
-use \Doctrine\ORM\EntityRepository;
-use \Zicht\Bundle\MessagesBundle\TranslationsRepository;
+use Doctrine\ORM\EntityRepository;
+use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
  * Class MessageRepository

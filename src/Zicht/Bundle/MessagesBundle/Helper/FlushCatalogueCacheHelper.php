@@ -6,7 +6,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Helper;
 
-use \Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\Finder;
 
 /**
  * Helper class to flush the catalogue cache

@@ -6,7 +6,7 @@
 
 namespace Zicht\Bundle\MessagesBundle;
 
-use \Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
  * Class ZichtMessagesBundle

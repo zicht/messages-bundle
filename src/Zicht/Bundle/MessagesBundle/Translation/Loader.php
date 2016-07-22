@@ -5,10 +5,9 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Translation;
 
-use \Symfony\Component\Translation\MessageCatalogue;
-use \Symfony\Component\Translation\Loader\LoaderInterface;
-
-use \Zicht\Bundle\MessagesBundle\TranslationsRepository;
+use Symfony\Component\Translation\MessageCatalogue;
+use Symfony\Component\Translation\Loader\LoaderInterface;
+use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
  * Translation loader implementation

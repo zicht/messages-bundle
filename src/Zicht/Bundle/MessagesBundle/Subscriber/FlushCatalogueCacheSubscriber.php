@@ -5,11 +5,11 @@
  */
 namespace Zicht\Bundle\MessagesBundle\Subscriber;
 
-use \Doctrine\Common\EventSubscriber;
-use \Doctrine\ORM\Events;
-use \Zicht\Bundle\MessagesBundle\Entity;
-use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper as Helper;
-use \Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
+use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Events;
+use Zicht\Bundle\MessagesBundle\Entity;
+use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper as Helper;
+use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 
 /**
  * Subscribes to the Doctrine entity manager to flush Symfony's translation cache

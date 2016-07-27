@@ -23,6 +23,9 @@ class MessageTranslationAdmin extends AbstractAdmin
 {
     protected $parentAssociationMapping = 'message';
 
+    /**
+     * available states
+     */
     const STATE_CHOICES = array(
         MessageTranslation::STATE_UNKNOWN => 'message.state.unknown',
         MessageTranslation::STATE_IMPORT => 'message.state.import',
@@ -34,9 +37,7 @@ class MessageTranslationAdmin extends AbstractAdmin
      */
     public function configureShowFields(ShowMapper $showMapper)
     {
-        $showMapper
-            ->add('translation')
-        ;
+        $showMapper->add('translation');
     }
 
     /**
@@ -55,8 +56,7 @@ class MessageTranslationAdmin extends AbstractAdmin
                 ->add('locale', null, array('required' => true))
                 ->add('translation', null, array('required' => false))
                 ->add('state', 'choice', array('disabled' => true, 'choices' => array_map($translate, $this::STATE_CHOICES)))
-            ->end()
-        ;
+            ->end();
     }
 
     /**
@@ -64,9 +64,7 @@ class MessageTranslationAdmin extends AbstractAdmin
      */
     public function configureListFields(ListMapper $listMapper)
     {
-        $listMapper
-            ->addIdentifier('translation')
-        ;
+        $listMapper->addIdentifier('translation');
     }
 
     /**
@@ -74,8 +72,6 @@ class MessageTranslationAdmin extends AbstractAdmin
      */
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
-        $datagridMapper
-            ->add('translation')
-        ;
+        $datagridMapper->add('translation');
     }
 }

@@ -52,26 +52,28 @@ class LoadCommand extends ContainerAwareCommand
 
         $messageManager = $this->getContainer()->get('zicht_messages.manager');
 
-        $messageManager->transactional(function() use($files, $loaders, $overwrite, $output, $messageManager) {
-            foreach ($files as $filename) {
-                $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        $messageManager->transactional(
+            function () use ($files, $loaders, $overwrite, $output, $messageManager) {
+                foreach ($files as $filename) {
+                    $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
-                if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
-                    $output->writeln('Unsupported file type: ' . $filename);
-                } else {
-                    $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
+                    if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
+                        $output->writeln('Unsupported file type: ' . $filename);
+                    } else {
+                        $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
 
-                    $numLoaded = $messageManager->loadMessages(
-                        $catalogue,
-                        $overwrite,
-                        function ($e, $key) use ($output) {
-                            $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
-                        }
-                    );
+                        $numLoaded = $messageManager->loadMessages(
+                            $catalogue,
+                            $overwrite,
+                            function ($e, $key) use ($output) {
+                                $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
+                            }
+                        );
 
-                    $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
+                        $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
+                    }
                 }
             }
-        });
+        );
     }
 }

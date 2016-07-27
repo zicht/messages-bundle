@@ -23,7 +23,6 @@ class Loader implements LoaderInterface
      */
     protected $repository;
 
-
     /**
      * Set the repository to load the messages from.
      *
@@ -35,9 +34,13 @@ class Loader implements LoaderInterface
         $this->repository = $repo;
     }
 
-
     /**
-     * @{inheritDoc}
+     * Load
+     *
+     * @param mixed $resource
+     * @param string $locale
+     * @param string $domain
+     * @return MessageCatalogue
      */
     public function load($resource, $locale, $domain = 'messages')
     {

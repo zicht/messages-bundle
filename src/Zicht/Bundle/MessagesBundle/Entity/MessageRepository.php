@@ -29,8 +29,8 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
             ->select('m, t')
             ->join('m.translations', 't')
             ->andWhere('t.locale=:locale')
-            ->andWhere('m.domain=:domain')
-        ;
+            ->andWhere('m.domain=:domain');
+
         $q->setParameters(array('locale' => $locale, 'domain' => $domain));
 
         $ret = array();
@@ -54,8 +54,8 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
             ->createQueryBuilder('m')
             ->select('m.domain')
             ->distinct()
-            ->orderBy('m.domain')
-        ;
+            ->orderBy('m.domain');
+
         $ret = array();
         foreach ($q->getQuery()->execute() as $result) {
             $ret[$result['domain']] = $result['domain'];

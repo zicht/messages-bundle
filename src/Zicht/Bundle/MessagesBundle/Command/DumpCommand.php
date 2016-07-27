@@ -28,8 +28,7 @@ class DumpCommand extends ContainerAwareCommand
             ->setDescription('Dump all messages from the translation files and database to stdout')
             ->addArgument('locale', InputArgument::REQUIRED, "The locale to dump messages for")
             ->addArgument('domain', InputArgument::OPTIONAL, "The domain to dump messages for", 'messages')
-            ->addOption('format', '', InputOption::VALUE_REQUIRED, 'The output format to use', 'yml')
-        ;
+            ->addOption('format', '', InputOption::VALUE_REQUIRED, 'The output format to use', 'yml');
     }
 
     /**
@@ -50,7 +49,8 @@ class DumpCommand extends ContainerAwareCommand
                 var_export($messages);
                 echo ';', "\n";
                 break;
-            case 'yml': case 'yaml':
+            case 'yml':
+            case 'yaml':
                 echo Yaml::dump($messages, 4, 4);
                 break;
             default:

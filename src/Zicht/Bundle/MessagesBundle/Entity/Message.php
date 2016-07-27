@@ -84,7 +84,7 @@ class Message
 
 
     /**
-     * @return MessageTranslation[]
+     * @return ArrayCollection
      */
     public function getTranslations()
     {

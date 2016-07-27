@@ -17,6 +17,21 @@ use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 class FlushCatalogueCacheSubscriber implements EventSubscriber
 {
     /**
+     * @var bool
+     */
+    protected $isDirty;
+
+    /**
+     * @var FlushCatalogueCacheHelper
+     */
+    protected $helper;
+
+    /**
+     * @var array
+     */
+    protected $entity;
+
+    /**
      * Construct the subscriber with the passed cachedir.
      *
      * @param FlushCatalogueCacheHelper $helper
@@ -46,19 +61,19 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
             /** @var $uow \Doctrine\ORM\UnitOfWork */
             $uow = $em->getUnitOfWork();
 
-            foreach (
-                array(
-                    $uow->getScheduledEntityUpdates(),
-                    $uow->getScheduledEntityDeletions(),
-                    $uow->getScheduledEntityInsertions(),
-                    $uow->getScheduledCollectionUpdates(),
-                    $uow->getScheduledCollectionDeletions(),
-                    $uow->getScheduledCollectionDeletions(),
-                    $uow->getScheduledCollectionUpdates()
-                ) as $obj) {
+            $array = array(
+                $uow->getScheduledEntityUpdates(),
+                $uow->getScheduledEntityDeletions(),
+                $uow->getScheduledEntityInsertions(),
+                $uow->getScheduledCollectionUpdates(),
+                $uow->getScheduledCollectionDeletions(),
+                $uow->getScheduledCollectionDeletions(),
+                $uow->getScheduledCollectionUpdates()
+            );
+
+            foreach ($array as $obj) {
                 foreach ($obj as $element) {
-                    if (
-                        $element instanceof Entity\Message
+                    if ($element instanceof Entity\Message
                      || $element instanceof Entity\MessageTranslation
                     ) {
                         $this->isDirty = true;
@@ -67,6 +82,7 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
                 }
             }
         }
+
         $this->flushCache();
     }
 

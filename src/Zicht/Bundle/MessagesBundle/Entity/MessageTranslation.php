@@ -21,8 +21,19 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class MessageTranslation
 {
+    /**
+     * Unknown state
+     */
     const STATE_UNKNOWN = 'unknown';
+
+    /**
+     * Import state
+     */
     const STATE_IMPORT = 'import';
+
+    /**
+     * User state
+     */
     const STATE_USER = 'user';
 
     /**
@@ -73,7 +84,7 @@ class MessageTranslation
      * @param string $translation
      * @param string $state
      */
-    function __construct($locale = null, $translation = null, $state = MessageTranslation::STATE_UNKNOWN)
+    public function __construct($locale = null, $translation = null, $state = MessageTranslation::STATE_UNKNOWN)
     {
         $this->locale = $locale;
         $this->translation = $translation;

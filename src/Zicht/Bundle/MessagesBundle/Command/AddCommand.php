@@ -24,8 +24,7 @@ class AddCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('zicht:messages:add')
+        $this->setName('zicht:messages:add')
             ->setDescription('Add a single message to the database')
             ->addArgument('message', InputArgument::REQUIRED, "The message id")
             ->addArgument('domain', InputArgument::OPTIONAL, "The message domain", 'messages')

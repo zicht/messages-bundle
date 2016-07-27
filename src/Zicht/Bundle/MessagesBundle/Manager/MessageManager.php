@@ -39,6 +39,7 @@ class MessageManager
      * Constructor
      *
      * @param Registry $doctrine
+     * @param FlushCatalogueCacheHelper $flushHelper
      */
     public function __construct(Registry $doctrine, $flushHelper)
     {
@@ -77,6 +78,12 @@ class MessageManager
         $message->addMissingTranslations($this->locales);
     }
 
+    /**
+     * Transactional
+     *
+     * @param callable $callback
+     * @return int
+     */
     public function transactional($callback)
     {
         $n = 0;
@@ -96,15 +103,26 @@ class MessageManager
      * @param MessageCatalogueInterface $catalogue
      * @param bool|array $overwrite
      * @param callable $onError
+     * @param string $state
      * @return int
      */
-    public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError, $state = MessageTranslation::STATE_IMPORT)
-    {
+    public function loadMessages(
+        MessageCatalogueInterface $catalogue,
+        $overwrite,
+        $onError,
+        $state = MessageTranslation::STATE_IMPORT
+    ) {
         $n = 0;
         $overwrite = array(
-            MessageTranslation::STATE_UNKNOWN => is_array($overwrite) && array_key_exists(MessageTranslation::STATE_UNKNOWN, $overwrite) ? $overwrite[MessageTranslation::STATE_UNKNOWN] : false,
-            MessageTranslation::STATE_IMPORT => is_array($overwrite) && array_key_exists(MessageTranslation::STATE_IMPORT, $overwrite) ? $overwrite[MessageTranslation::STATE_IMPORT] : false,
-            MessageTranslation::STATE_USER => is_array($overwrite) && array_key_exists(MessageTranslation::STATE_USER, $overwrite) ? $overwrite[MessageTranslation::STATE_USER] : false,
+            MessageTranslation::STATE_UNKNOWN =>
+                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_UNKNOWN, $overwrite) ?
+                    $overwrite[MessageTranslation::STATE_UNKNOWN] : false,
+            MessageTranslation::STATE_IMPORT =>
+                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_IMPORT, $overwrite) ?
+                    $overwrite[MessageTranslation::STATE_IMPORT] : false,
+            MessageTranslation::STATE_USER =>
+                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_USER, $overwrite) ?
+                    $overwrite[MessageTranslation::STATE_USER] : false,
         );
 
         $em = $this->doctrine->getManager();
@@ -115,10 +133,12 @@ class MessageManager
                     $record->message = $key;
                     $record->domain = $domain;
                     /** @var Message $existing */
-                    $existing = $this->getRepository()->findOneBy(array(
-                        'message' => $key,
-                        'domain' => $domain
-                    ));
+                    $existing = $this->getRepository()->findOneBy(
+                        array(
+                            'message' => $key,
+                            'domain' => $domain
+                        )
+                    );
 
                     if ($existing) {
                         if ($translationEntity = $existing->hasTranslation($catalogue->getLocale())) {
@@ -138,7 +158,7 @@ class MessageManager
                     $em->persist($record);
                     $em->flush();
 
-                    $n ++;
+                    $n++;
                 } catch (\Exception $e) {
                     if (is_callable($onError)) {
                         $onError($e, $key);
@@ -167,6 +187,7 @@ class MessageManager
      *
      * @param TranslatorInterface $translator
      * @param string $kernelRoot
+     * @param bool $fix
      * @return array
      */
     public function check(TranslatorInterface $translator, $kernelRoot, $fix = false)
@@ -181,7 +202,7 @@ class MessageManager
 
                 $translationFile = 'Resources/translations/' . $message->domain . '.' . $translation->locale . '.db';
                 if (!is_file($kernelRoot . '/' . $translationFile)) {
-                    if ($fix) {
+                    if ($fix === true) {
                         touch($kernelRoot . '/' . $translationFile);
                         $msg = 'Translation file app/' . $translationFile . ' created';
                     } else {
@@ -203,6 +224,7 @@ class MessageManager
                 }
             }
         }
+
         return $issues;
     }
 }

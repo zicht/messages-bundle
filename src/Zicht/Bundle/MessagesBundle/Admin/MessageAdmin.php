@@ -40,9 +40,7 @@ class MessageAdmin extends AbstractAdmin
      */
     public function configureShowFields(ShowMapper $showMapper)
     {
-        $showMapper
-            ->add('message')
-         ;
+        $showMapper->add('message');
     }
 
     /**
@@ -51,12 +49,15 @@ class MessageAdmin extends AbstractAdmin
     public function configureFormFields(FormMapper $formMapper)
     {
         // add the collection type for existing messages.
-        $formMapper
-            ->with('General')
-                ->add('message', NULL, array('required' => TRUE))
-                ->add('domain', 'choice', array('required' => TRUE, 'choices' => $this->messageManager->getRepository()->getDomains()))
-            ->end()
-        ;
+        $formMapper->with('General')
+            ->add('message', null, array('required' => true))
+            ->add(
+                'domain',
+                'choice',
+                array('required' => true, 'choices' => $this->messageManager->getRepository()->getDomains())
+            )
+            ->end();
+
         if ($this->getSubject()->getId()) {
             $formMapper
                 ->with('General')
@@ -69,8 +70,7 @@ class MessageAdmin extends AbstractAdmin
                         'inline' => 'table',
                     )
                 )
-                ->end()
-            ;
+                ->end();
         }
     }
 
@@ -82,14 +82,17 @@ class MessageAdmin extends AbstractAdmin
         $listMapper
             ->addIdentifier('message')
             ->add('domain')
-            ->add('_action', 'actions', array(
-                'actions' => array(
-                    'show' => array(),
-                    'edit' => array(),
-                    'delete' => array(),
+            ->add(
+                '_action',
+                'actions',
+                array(
+                    'actions' => array(
+                        'show' => array(),
+                        'edit' => array(),
+                        'delete' => array(),
+                    )
                 )
-            ))
-        ;
+            );
     }
 
 
@@ -98,12 +101,20 @@ class MessageAdmin extends AbstractAdmin
      */
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
-        $datagridMapper
-            ->add('domain', null, array(), 'choice', array('choices' => $this->messageManager->getRepository()->getDomains()))
-            ->add('message', 'doctrine_orm_callback', array(
-                'callback'   => array($this, 'filteredOnTranslations')
-            )
-        );
+        $datagridMapper->add(
+            'domain',
+            null,
+            array(),
+            'choice',
+            array('choices' => $this->messageManager->getRepository()->getDomains())
+        )
+            ->add(
+                'message',
+                'doctrine_orm_callback',
+                array(
+                    'callback' => array($this, 'filteredOnTranslations')
+                )
+            );
     }
 
     /**
@@ -139,8 +150,9 @@ class MessageAdmin extends AbstractAdmin
     }
 
     /**
-     * @{inheritDoc}
-     * @var Message $object
+     * Pre persist
+     *
+     * @param Message $object
      */
     public function prePersist($object)
     {
@@ -148,8 +160,9 @@ class MessageAdmin extends AbstractAdmin
     }
 
     /**
-     * @{inheritDoc}
-     * @var Message $object
+     * Pre update
+     *
+     * @param Message $object
      */
     public function preUpdate($object)
     {

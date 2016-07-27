@@ -30,7 +30,7 @@ class FlushCatalogueCacheHelper
     /**
      * Change whether or not the helper should be enabled
      *
-     * @param $enabled
+     * @param bool $enabled
      */
     public function setEnabled($enabled)
     {

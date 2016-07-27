@@ -20,12 +20,10 @@ class CheckCommand extends ContainerAwareCommand
      */
     protected function configure()
     {
-        $this
-            ->setName('zicht:messages:check')
+        $this->setName('zicht:messages:check')
             ->setDescription('Check whether the database translations are working')
-            ->addOption('fix', '', InputOption::VALUE_NONE, 'Try to fix whatever can be fixed')
-        ;
-}
+            ->addOption('fix', '', InputOption::VALUE_NONE, 'Try to fix whatever can be fixed');
+    }
 
     /**
      * @{inheritDoc}

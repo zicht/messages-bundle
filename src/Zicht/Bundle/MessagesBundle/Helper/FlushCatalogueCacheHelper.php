@@ -58,6 +58,9 @@ class FlushCatalogueCacheHelper
                 if (is_callable('apc_delete_file')) {
                     apc_delete_file(@$file->getPathname());
                 }
+                if (is_callable(' opcache_invalidate')) {
+                    opcache_invalidate(@$file->getPathname(), true);
+                }
                 if (unlink(@$file->getPathname())) {
                     $files[]= @$file->getPathname();
                     $removed ++;

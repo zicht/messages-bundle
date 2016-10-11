@@ -9,6 +9,7 @@ namespace Zicht\Bundle\MessagesBundle\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
@@ -28,6 +29,7 @@ class LoadCommand extends ContainerAwareCommand
             ->setName('zicht:messages:load')
             ->setDescription('Load messages from a source file into the database')
             ->addArgument('file', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'File to load the messages from.  Filename MUST match the pattern: "NAME.LOCALE.EXTENTION')
+            ->addOption('sync', null, InputOption::VALUE_NONE, 'Whether to sync the status in the database before loading the file (useful for migration purposes)')
             ->addOption('overwrite-unknown', null, null, 'Overwrite existing translations that have state "unknown"')
             ->addOption('overwrite-import', null, null, 'Overwrite existing translations that have state "import"')
             ->addOption('overwrite-user', null, null, 'Overwrite existing translations that have state "user"')
@@ -40,6 +42,7 @@ class LoadCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $files = $input->getArgument('file');
+        $isSync = $input->getOption('sync');
         $overwrite = array(
             MessageTranslation::STATE_UNKNOWN => $input->getOption('overwrite') || $input->getOption('overwrite-unknown'),
             MessageTranslation::STATE_IMPORT => $input->getOption('overwrite') || $input->getOption('overwrite-import'),
@@ -53,7 +56,7 @@ class LoadCommand extends ContainerAwareCommand
         $messageManager = $this->getContainer()->get('zicht_messages.manager');
 
         $messageManager->transactional(
-            function () use ($files, $loaders, $overwrite, $output, $messageManager) {
+            function () use ($files, $isSync, $loaders, $overwrite, $output, $messageManager) {
                 foreach ($files as $filename) {
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -69,8 +72,12 @@ class LoadCommand extends ContainerAwareCommand
                                 $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
                             }
                         );
-
                         $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
+
+                        if ($isSync) {
+                            list($import, $user) = $messageManager->syncState($catalogue);
+                            $output->writeln(sprintf('    (synced state: <info>%d</info> set to \'import\'; <info>%d</info> set to \'user\')', $import, $user));
+                        }
                     }
                 }
             }

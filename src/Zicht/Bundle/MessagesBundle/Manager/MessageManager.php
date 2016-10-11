@@ -6,6 +6,7 @@
 namespace Zicht\Bundle\MessagesBundle\Manager;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\Driver\PDOConnection;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Zicht\Bundle\MessagesBundle\Entity\Message;
@@ -95,6 +96,70 @@ class MessageManager
         $em->getConnection()->commit();
         call_user_func($this->flushHelper);
         return $n;
+    }
+
+    /**
+     * Synchronizes `state` in the database to the actual situation:
+     *
+     * - set it to 'import' if the database contents are equal to the file's contents
+     * - set it to 'user' if not
+     *
+     * Returns a tuple containing a count of 'import' and 'user' state messages that 
+     * were changed 
+     *
+     * @param MessageCatalogueInterface $catalogue
+     * @return int[] 
+     */
+    public function syncState(MessageCatalogueInterface $catalogue)
+    {
+        /* @var PDOConnection $conn */
+        $conn = $this->doctrine->getConnection()->getWrappedConnection();
+
+        $where = [];
+        $where[MessageTranslation::STATE_IMPORT] = [];
+        $where[MessageTranslation::STATE_USER] = [];
+        foreach ($catalogue->all() as $domain => $messages) {
+            foreach ($messages as $key => $translation) {
+                $where[MessageTranslation::STATE_IMPORT][]= vsprintf(
+                    '(locale=%s AND domain=%s AND message=%s AND translation=%s)',
+                    array_map(
+                        [$conn, 'quote'],
+                        [$catalogue->getLocale(), $domain, $key, $translation]
+                    )
+                );
+                $where[MessageTranslation::STATE_USER][]= vsprintf(
+                    '(locale=%s AND domain=%s AND message=%s AND translation <> %s)',
+                    array_map(
+                        [$conn, 'quote'],
+                        [$catalogue->getLocale(), $domain, $key, $translation]
+                    )
+                );
+            }
+        }
+
+        if (0 === array_sum(array_map('count', $where))) {
+            return [0, 0];
+        }
+
+        $affected = [MessageTranslation::STATE_IMPORT => 0, MessageTranslation::STATE_USER => 0];
+        foreach ($where as $newState => $whereClauses) {
+            $query = sprintf(
+                'UPDATE 
+                    message_translation 
+                        INNER JOIN message ON 
+                            message.id=message_translation.message_id 
+                    SET 
+                        state=%s
+                    WHERE
+                        %s',
+                $conn->quote($newState),
+                join("\nOR ", $whereClauses)
+            );
+
+
+            $affected[$newState] += $conn->exec($query);
+        }
+        return array_values($affected);
     }
 
     /**

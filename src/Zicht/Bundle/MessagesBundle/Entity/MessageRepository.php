@@ -20,7 +20,7 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
      *
      * @param string $locale
      * @param string $domain
-     * @return \Generator|array
+     * @return \Generator
      */
     public function getTranslations($locale, $domain)
     {

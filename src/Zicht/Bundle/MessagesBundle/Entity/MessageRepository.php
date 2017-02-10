@@ -20,27 +20,18 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
      *
      * @param string $locale
      * @param string $domain
-     * @return array
+     * @return \Generator
      */
     public function getTranslations($locale, $domain)
     {
-        $q = $this
-            ->createQueryBuilder('m')
-            ->select('m, t')
-            ->join('m.translations', 't')
-            ->andWhere('t.locale=:locale')
-            ->andWhere('m.domain=:domain');
-
-        $q->setParameters(array('locale' => $locale, 'domain' => $domain));
-
-        $ret = array();
-        foreach ($q->getQuery()->execute() as $message) {
-            if ($translation = $message->getTranslation($locale)) {
-                $ret[$message->message] = $translation->translation;
-            }
+        $conn = $this->$this->getEntityManager()->getConnection();
+        $stmt = $conn->executeQuery(
+            'SELECT m.message, t.translation FROM message m JOIN message_translation t ON (t.message_id = m.id AND t.locale = ? ) WHERE m.domain = ?',
+            [$locale, $domain]
+        );
+        while ($row = $stmt->fetch()) {
+            yield $row['message'] => $row['translation'];
         }
-
-        return $ret;
     }
 
     /**

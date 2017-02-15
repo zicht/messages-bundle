@@ -54,9 +54,12 @@ class LoadCommand extends ContainerAwareCommand
         );
 
         $messageManager = $this->getContainer()->get('zicht_messages.manager');
+        $cacheHelper = $this->getContainer()->get('zicht_messages.flush_cache_helper');
+        $cacheHelper->setEnabled(true);
+        $updated = 0;
 
         $messageManager->transactional(
-            function () use ($files, $isSync, $loaders, $overwrite, $output, $messageManager) {
+            function () use ($files, $isSync, $loaders, $overwrite, $output, $messageManager, &$updated) {
                 foreach ($files as $filename) {
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -65,14 +68,16 @@ class LoadCommand extends ContainerAwareCommand
                     } else {
                         $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
 
-                        $numLoaded = $messageManager->loadMessages(
+                        list($numLoaded, $numUpdated) = $messageManager->loadMessages(
                             $catalogue,
                             $overwrite,
                             function ($e, $key) use ($output) {
                                 $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
-                            }
+                            },
+                            MessageTranslation::STATE_IMPORT
                         );
                         $output->writeln(sprintf("<info>%d</info> messages loaded from <info>%s</info>", $numLoaded, $filename));
+                        $updated += $numUpdated;
 
                         if ($isSync) {
                             list($import, $user) = $messageManager->syncState($catalogue);
@@ -82,5 +87,8 @@ class LoadCommand extends ContainerAwareCommand
                 }
             }
         );
+        if ($updated > 0) {
+            $cacheHelper->__invoke();
+        }
     }
 }

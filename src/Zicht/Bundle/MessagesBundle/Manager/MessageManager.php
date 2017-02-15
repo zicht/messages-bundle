@@ -10,9 +10,10 @@ use Doctrine\DBAL\Driver\PDOConnection;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Zicht\Bundle\MessagesBundle\Entity\Message;
+use Zicht\Bundle\MessagesBundle\Entity\MessageRepository;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
-use Zicht\Bundle\MessagesBundle\TranslationsRepository;
+
 
 /**
  * Central management service for messages
@@ -90,11 +91,8 @@ class MessageManager
         $n = 0;
         $em = $this->doctrine->getManager();
         $em->getConnection()->beginTransaction();
-
         $callback($n);
-
         $em->getConnection()->commit();
-        call_user_func($this->flushHelper);
         return $n;
     }
 
@@ -104,11 +102,11 @@ class MessageManager
      * - set it to 'import' if the database contents are equal to the file's contents
      * - set it to 'user' if not
      *
-     * Returns a tuple containing a count of 'import' and 'user' state messages that 
-     * were changed 
+     * Returns a tuple containing a count of 'import' and 'user' state messages that
+     * were changed
      *
      * @param MessageCatalogueInterface $catalogue
-     * @return int[] 
+     * @return int[]
      */
     public function syncState(MessageCatalogueInterface $catalogue)
     {
@@ -121,14 +119,14 @@ class MessageManager
         foreach ($catalogue->all() as $domain => $messages) {
             foreach ($messages as $key => $translation) {
                 $where[MessageTranslation::STATE_IMPORT][]= vsprintf(
-                    '(locale=%s AND domain=%s AND message=%s AND translation=%s COLLATE utf8_bin)',
+                    '(locale=%s AND domain=%s AND message=%s AND translation=%s)',
                     array_map(
                         [$conn, 'quote'],
                         [$catalogue->getLocale(), $domain, $key, $translation]
                     )
                 );
                 $where[MessageTranslation::STATE_USER][]= vsprintf(
-                    '(locale=%s AND domain=%s AND message=%s AND translation <> %s COLLATE utf8_bin)',
+                    '(locale=%s AND domain=%s AND message=%s AND translation <> %s)',
                     array_map(
                         [$conn, 'quote'],
                         [$catalogue->getLocale(), $domain, $key, $translation]
@@ -159,7 +157,6 @@ class MessageManager
 
             $affected[$newState] += $conn->exec($query);
         }
-
         return array_values($affected);
     }
 
@@ -172,59 +169,48 @@ class MessageManager
      * @param string $state
      * @return int
      */
-    public function loadMessages(
-        MessageCatalogueInterface $catalogue,
-        $overwrite,
-        $onError,
-        $state = MessageTranslation::STATE_IMPORT
-    ) {
-        $n = 0;
+    public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError, $state = MessageTranslation::STATE_IMPORT)
+    {
+        $updated = 0;
+        $loaded = 0;
         $overwrite = array(
-            MessageTranslation::STATE_UNKNOWN =>
-                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_UNKNOWN, $overwrite) ?
-                    $overwrite[MessageTranslation::STATE_UNKNOWN] : false,
-            MessageTranslation::STATE_IMPORT =>
-                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_IMPORT, $overwrite) ?
-                    $overwrite[MessageTranslation::STATE_IMPORT] : false,
-            MessageTranslation::STATE_USER =>
-                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_USER, $overwrite) ?
-                    $overwrite[MessageTranslation::STATE_USER] : false,
+            MessageTranslation::STATE_UNKNOWN => $this->getOverwriteValue(MessageTranslation::STATE_UNKNOWN, $overwrite),
+            MessageTranslation::STATE_IMPORT => $this->getOverwriteValue(MessageTranslation::STATE_IMPORT, $overwrite),
+            MessageTranslation::STATE_USER => $this->getOverwriteValue(MessageTranslation::STATE_USER, $overwrite),
         );
-
         $em = $this->doctrine->getManager();
         foreach ($catalogue->all() as $domain => $messages) {
+            $loaded += count($messages);
             foreach ($messages as $key => $translation) {
                 try {
-                    $record = new Message();
-                    $record->message = $key;
-                    $record->domain = $domain;
-                    /** @var Message $existing */
-                    $existing = $this->getRepository()->findOneBy(
-                        array(
-                            'message' => $key,
-                            'domain' => $domain
-                        )
-                    );
-
-                    if ($existing) {
-                        if ($translationEntity = $existing->hasTranslation($catalogue->getLocale())) {
-                            if (array_key_exists($translationEntity->getState(), $overwrite) && $overwrite[$translationEntity->getState()]) {
-                                $translationEntity->translation = $translation;
-                                $translationEntity->state = $state;
+                    if (null === ($record = $this->getMessage($key, $domain))) {
+                        $record = new Message();
+                        $record->message = $key;
+                        $record->domain = $domain;
+                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
+                        $em->persist($record);
+                        $updated++;
+                    } else {
+                        if (false !== ($trans = $record->hasTranslation($catalogue->getLocale()))) {
+                            if (!empty($overwrite[$trans->getState()])) {
+                                $trans->translation = $translation;
+                                $trans->state = $state;
+                                $em->persist($trans);
+                                $em->persist($record);
+                                $updated++;
                             } else {
                                 continue;
                             }
                         } else {
-                            $existing->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
+                            $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
+                            $em->persist($record);
+                            $updated++;
                         }
-                        $record = $existing;
-                    } else {
-                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
                     }
-                    $em->persist($record);
-                    $em->flush();
-
-                    $n++;
+                    if ($updated%20 === 0) {
+                        $em->flush();
+                        $em->clear();
+                    }
                 } catch (\Exception $e) {
                     if (is_callable($onError)) {
                         $onError($e, $key);
@@ -232,15 +218,49 @@ class MessageManager
                 }
             }
         }
-
-        return $n;
+        if ($updated > 0 && $updated%20 !== 0) {
+            $em->flush();
+            $em->clear();
+        }
+        return array($loaded, $updated);
     }
 
+    /**
+     * Helper function for more readable check
+     *
+     * @param string $state
+     * @param mixed $overwrites
+     * @return bool
+     */
+    protected function getOverwriteValue($state, $overwrites)
+    {
+        if (is_array($overwrites) && array_key_exists($state, $overwrites)) {
+            return $overwrites[$state];
+        }
+        return false;
+    }
+
+    /**
+     * Search a message
+     *
+     * @param string $message
+     * @param string $domain
+     * @return null|Message
+     */
+    protected function getMessage($message, $domain)
+    {
+        return $this->getRepository()->findOneBy(
+            array(
+                'message' => $message,
+                'domain' => $domain
+            )
+        );
+    }
 
     /**
      * Returns the translations repository
      *
-     * @return TranslationsRepository
+     * @return MessageRepository
      */
     public function getRepository()
     {

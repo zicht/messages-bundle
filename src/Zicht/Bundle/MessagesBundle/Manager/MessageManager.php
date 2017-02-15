@@ -119,14 +119,14 @@ class MessageManager
         foreach ($catalogue->all() as $domain => $messages) {
             foreach ($messages as $key => $translation) {
                 $where[MessageTranslation::STATE_IMPORT][]= vsprintf(
-                    '(locale=%s AND domain=%s AND message=%s AND translation=%s) COLLATE utf8_bin',
+                    '(locale=%s AND domain=%s AND message=%s AND translation=%s COLLATE utf8_bin)',
                     array_map(
                         [$conn, 'quote'],
                         [$catalogue->getLocale(), $domain, $key, $translation]
                     )
                 );
                 $where[MessageTranslation::STATE_USER][]= vsprintf(
-                    '(locale=%s AND domain=%s AND message=%s AND translation <> %s) COLLATE utf8_bin',
+                    '(locale=%s AND domain=%s AND message=%s AND translation <> %s COLLATE utf8_bin)',
                     array_map(
                         [$conn, 'quote'],
                         [$catalogue->getLocale(), $domain, $key, $translation]

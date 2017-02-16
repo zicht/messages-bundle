@@ -55,7 +55,6 @@ class LoadCommand extends ContainerAwareCommand
 
         $messageManager = $this->getContainer()->get('zicht_messages.manager');
         $cacheHelper = $this->getContainer()->get('zicht_messages.flush_cache_helper');
-        $cacheHelper->setEnabled(true);
         $updated = 0;
 
         $messageManager->transactional(
@@ -88,7 +87,7 @@ class LoadCommand extends ContainerAwareCommand
             }
         );
         if ($updated > 0) {
-            $cacheHelper->__invoke();
+            $cacheHelper();
         }
     }
 }

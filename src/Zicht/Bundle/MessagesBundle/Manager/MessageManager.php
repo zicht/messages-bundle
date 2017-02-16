@@ -6,6 +6,7 @@
 namespace Zicht\Bundle\MessagesBundle\Manager;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOConnection;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -173,43 +174,57 @@ class MessageManager
     {
         $updated = 0;
         $loaded = 0;
+
         $overwrite = array(
             MessageTranslation::STATE_UNKNOWN => $this->getOverwriteValue(MessageTranslation::STATE_UNKNOWN, $overwrite),
             MessageTranslation::STATE_IMPORT => $this->getOverwriteValue(MessageTranslation::STATE_IMPORT, $overwrite),
             MessageTranslation::STATE_USER => $this->getOverwriteValue(MessageTranslation::STATE_USER, $overwrite),
         );
-        $em = $this->doctrine->getManager();
+
+        /** @var Connection $conn */
+        $conn = $this->doctrine->getConnection();
+
+        /** Prepare some sql statements */
+        $messageSelect = $conn->prepare(
+            "SELECT id FROM message WHERE message = ? AND domain = ?"
+        );
+        $messageInsert = $conn->prepare(
+            "INSERT INTO message (`message`, `domain`) VALUES (?, ?)"
+        );
+        $translationSelect = $conn->prepare(
+            "SELECT message_translation_id, state FROM message_translation WHERE message_id = ? AND locale = ?"
+        );
+        $translationInsert = $conn->prepare(
+            "INSERT INTO message_translation (`message_id`, `locale`, `translation`, `state`) VALUES (?, ?, ?, ?)"
+        );
+        $translationUpdate = $conn->prepare(
+            "UPDATE message_translation SET `locale` = ?, `translation` = ?, `state` = ? WHERE message_translation_id = ? AND message_id = ?"
+        );
+
+
         foreach ($catalogue->all() as $domain => $messages) {
             $loaded += count($messages);
             foreach ($messages as $key => $translation) {
                 try {
-                    if (null === ($record = $this->getMessage($key, $domain))) {
-                        $record = new Message();
-                        $record->message = $key;
-                        $record->domain = $domain;
-                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
-                        $em->persist($record);
-                        $updated++;
-                    } else {
-                        if (false !== ($trans = $record->hasTranslation($catalogue->getLocale()))) {
-                            if (!empty($overwrite[$trans->getState()])) {
-                                $trans->translation = $translation;
-                                $trans->state = $state;
-                                $em->persist($trans);
-                                $em->persist($record);
-                                $updated++;
-                            } else {
-                                continue;
+                    $messageSelect->execute(array($key, $domain));
+                    if (false !== ($mid = $messageSelect->fetchColumn(0))) {
+                        $translationSelect->execute(array($mid, $catalogue->getLocale()));
+                        $ret = $translationSelect->fetchAll();
+                        if (!empty($ret)) {
+                            list($tid, $translationState) = array_values(current($ret));
+                            if (!empty($overwrite[$translationState])) {
+                                $translationUpdate->execute(array($catalogue->getLocale(), $translation, $state, $tid, $mid));
+                                $updated += $translationUpdate->rowCount();
                             }
                         } else {
-                            $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
-                            $em->persist($record);
-                            $updated++;
+                            $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
+                            $updated += $translationInsert->rowCount();
                         }
-                    }
-                    if ($updated%20 === 0) {
-                        $em->flush();
-                        $em->clear();
+                    } else {
+                        $messageInsert->execute($key, $domain);
+                        $mid = $conn->lastInsertId();
+                        $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
+                        $updated += $translationInsert->rowCount();
                     }
                 } catch (\Exception $e) {
                     if (is_callable($onError)) {
@@ -217,10 +232,6 @@ class MessageManager
                     }
                 }
             }
-        }
-        if ($updated > 0 && $updated%20 !== 0) {
-            $em->flush();
-            $em->clear();
         }
         return array($loaded, $updated);
     }
@@ -238,23 +249,6 @@ class MessageManager
             return $overwrites[$state];
         }
         return false;
-    }
-
-    /**
-     * Search a message
-     *
-     * @param string $message
-     * @param string $domain
-     * @return null|Message
-     */
-    protected function getMessage($message, $domain)
-    {
-        return $this->getRepository()->findOneBy(
-            array(
-                'message' => $message,
-                'domain' => $domain
-            )
-        );
     }
 
     /**

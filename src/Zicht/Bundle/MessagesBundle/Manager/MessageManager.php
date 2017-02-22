@@ -168,7 +168,7 @@ class MessageManager
      * @param bool|array $overwrite
      * @param callable $onError
      * @param string $state
-     * @return int
+     * @return int[]
      */
     public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError, $state = MessageTranslation::STATE_IMPORT)
     {

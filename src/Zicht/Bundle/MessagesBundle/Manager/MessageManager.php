@@ -6,13 +6,15 @@
 namespace Zicht\Bundle\MessagesBundle\Manager;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOConnection;
 use Symfony\Component\Translation\MessageCatalogueInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Zicht\Bundle\MessagesBundle\Entity\Message;
+use Zicht\Bundle\MessagesBundle\Entity\MessageRepository;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
-use Zicht\Bundle\MessagesBundle\TranslationsRepository;
+
 
 /**
  * Central management service for messages
@@ -90,11 +92,8 @@ class MessageManager
         $n = 0;
         $em = $this->doctrine->getManager();
         $em->getConnection()->beginTransaction();
-
         $callback($n);
-
         $em->getConnection()->commit();
-        call_user_func($this->flushHelper);
         return $n;
     }
 
@@ -104,11 +103,11 @@ class MessageManager
      * - set it to 'import' if the database contents are equal to the file's contents
      * - set it to 'user' if not
      *
-     * Returns a tuple containing a count of 'import' and 'user' state messages that 
-     * were changed 
+     * Returns a tuple containing a count of 'import' and 'user' state messages that
+     * were changed
      *
      * @param MessageCatalogueInterface $catalogue
-     * @return int[] 
+     * @return int[]
      */
     public function syncState(MessageCatalogueInterface $catalogue)
     {
@@ -144,11 +143,11 @@ class MessageManager
         $affected = [MessageTranslation::STATE_IMPORT => 0, MessageTranslation::STATE_USER => 0];
         foreach ($where as $newState => $whereClauses) {
             $query = sprintf(
-                'UPDATE 
-                    message_translation 
-                        INNER JOIN message ON 
-                            message.id=message_translation.message_id 
-                    SET 
+                'UPDATE
+                    message_translation
+                        INNER JOIN message ON
+                            message.id=message_translation.message_id
+                    SET
                         state=%s
                     WHERE
                         %s',
@@ -159,7 +158,6 @@ class MessageManager
 
             $affected[$newState] += $conn->exec($query);
         }
-
         return array_values($affected);
     }
 
@@ -170,61 +168,64 @@ class MessageManager
      * @param bool|array $overwrite
      * @param callable $onError
      * @param string $state
-     * @return int
+     * @return int[]
      */
-    public function loadMessages(
-        MessageCatalogueInterface $catalogue,
-        $overwrite,
-        $onError,
-        $state = MessageTranslation::STATE_IMPORT
-    ) {
-        $n = 0;
+    public function loadMessages(MessageCatalogueInterface $catalogue, $overwrite, $onError, $state = MessageTranslation::STATE_IMPORT)
+    {
+        $updated = 0;
+        $loaded = 0;
+
         $overwrite = array(
-            MessageTranslation::STATE_UNKNOWN =>
-                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_UNKNOWN, $overwrite) ?
-                    $overwrite[MessageTranslation::STATE_UNKNOWN] : false,
-            MessageTranslation::STATE_IMPORT =>
-                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_IMPORT, $overwrite) ?
-                    $overwrite[MessageTranslation::STATE_IMPORT] : false,
-            MessageTranslation::STATE_USER =>
-                is_array($overwrite) && array_key_exists(MessageTranslation::STATE_USER, $overwrite) ?
-                    $overwrite[MessageTranslation::STATE_USER] : false,
+            MessageTranslation::STATE_UNKNOWN => $this->getOverwriteValue(MessageTranslation::STATE_UNKNOWN, $overwrite),
+            MessageTranslation::STATE_IMPORT => $this->getOverwriteValue(MessageTranslation::STATE_IMPORT, $overwrite),
+            MessageTranslation::STATE_USER => $this->getOverwriteValue(MessageTranslation::STATE_USER, $overwrite),
         );
 
-        $em = $this->doctrine->getManager();
+        /** @var Connection $conn */
+        $conn = $this->doctrine->getConnection();
+
+        /** Prepare some sql statements */
+        $messageSelect = $conn->prepare(
+            "SELECT id FROM message WHERE message = ? AND domain = ?"
+        );
+        $messageInsert = $conn->prepare(
+            "INSERT INTO message (`message`, `domain`) VALUES (?, ?)"
+        );
+        $translationSelect = $conn->prepare(
+            "SELECT message_translation_id, state FROM message_translation WHERE message_id = ? AND locale = ?"
+        );
+        $translationInsert = $conn->prepare(
+            "INSERT INTO message_translation (`message_id`, `locale`, `translation`, `state`) VALUES (?, ?, ?, ?)"
+        );
+        $translationUpdate = $conn->prepare(
+            "UPDATE message_translation SET `locale` = ?, `translation` = ?, `state` = ? WHERE message_translation_id = ? AND message_id = ?"
+        );
+
+
         foreach ($catalogue->all() as $domain => $messages) {
+            $loaded += count($messages);
             foreach ($messages as $key => $translation) {
                 try {
-                    $record = new Message();
-                    $record->message = $key;
-                    $record->domain = $domain;
-                    /** @var Message $existing */
-                    $existing = $this->getRepository()->findOneBy(
-                        array(
-                            'message' => $key,
-                            'domain' => $domain
-                        )
-                    );
-
-                    if ($existing) {
-                        if ($translationEntity = $existing->hasTranslation($catalogue->getLocale())) {
-                            if (array_key_exists($translationEntity->getState(), $overwrite) && $overwrite[$translationEntity->getState()]) {
-                                $translationEntity->translation = $translation;
-                                $translationEntity->state = $state;
-                            } else {
-                                continue;
+                    $messageSelect->execute(array($key, $domain));
+                    if (false !== ($mid = $messageSelect->fetchColumn(0))) {
+                        $translationSelect->execute(array($mid, $catalogue->getLocale()));
+                        $ret = $translationSelect->fetchAll();
+                        if (!empty($ret)) {
+                            list($tid, $translationState) = array_values(current($ret));
+                            if (!empty($overwrite[$translationState])) {
+                                $translationUpdate->execute(array($catalogue->getLocale(), $translation, $state, $tid, $mid));
+                                $updated += $translationUpdate->rowCount();
                             }
                         } else {
-                            $existing->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
+                            $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
+                            $updated += $translationInsert->rowCount();
                         }
-                        $record = $existing;
                     } else {
-                        $record->addTranslations(new MessageTranslation($catalogue->getLocale(), $translation, $state));
+                        $messageInsert->execute($key, $domain);
+                        $mid = $conn->lastInsertId();
+                        $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
+                        $updated += $translationInsert->rowCount();
                     }
-                    $em->persist($record);
-                    $em->flush();
-
-                    $n++;
                 } catch (\Exception $e) {
                     if (is_callable($onError)) {
                         $onError($e, $key);
@@ -232,15 +233,28 @@ class MessageManager
                 }
             }
         }
-
-        return $n;
+        return array($loaded, $updated);
     }
 
+    /**
+     * Helper function for more readable check
+     *
+     * @param string $state
+     * @param mixed $overwrites
+     * @return bool
+     */
+    protected function getOverwriteValue($state, $overwrites)
+    {
+        if (is_array($overwrites) && array_key_exists($state, $overwrites)) {
+            return $overwrites[$state];
+        }
+        return false;
+    }
 
     /**
      * Returns the translations repository
      *
-     * @return TranslationsRepository
+     * @return MessageRepository
      */
     public function getRepository()
     {

@@ -24,7 +24,7 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
      */
     public function getTranslations($locale, $domain)
     {
-        $conn = $this->$this->getEntityManager()->getConnection();
+        $conn = $this->getEntityManager()->getConnection();
         $stmt = $conn->executeQuery(
             'SELECT m.message, t.translation FROM message m JOIN message_translation t ON (t.message_id = m.id AND t.locale = ? ) WHERE m.domain = ?',
             [$locale, $domain]

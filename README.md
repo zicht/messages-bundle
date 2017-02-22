@@ -4,9 +4,6 @@ The ZichtMessagesBundle provides an Doctrine entity and admin screens
  message keys. Additionally, some console tools are available for your 
  convenience.
  
-## Maintainer ##
-This library is maintained by Boudewijn.
-
 ## Admin ##
 The admin is based on the SonataAdminBundle.
 
@@ -42,3 +39,6 @@ to you z config:
 messages:
     overwrite_compatibility: false
 ```
+## Maintainer(s) ##
+* Boudewijn Schoon <boudewijn@zicht.nl>
+* Philip Bergman <philip@zicht.nl>

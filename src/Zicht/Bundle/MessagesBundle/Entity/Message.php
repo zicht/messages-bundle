@@ -36,7 +36,7 @@ class Message
 
     /**
      * @var string
-     * @ORM\Column(type="binary", length=1000)
+     * @ORM\Column(type="binary", length=767)
      */
     public $message;
 

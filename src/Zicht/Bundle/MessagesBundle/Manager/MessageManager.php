@@ -221,7 +221,7 @@ class MessageManager
                             $updated += $translationInsert->rowCount();
                         }
                     } else {
-                        $messageInsert->execute($key, $domain);
+                        $messageInsert->execute(array($key, $domain));
                         $mid = $conn->lastInsertId();
                         $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
                         $updated += $translationInsert->rowCount();

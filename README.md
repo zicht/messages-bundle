@@ -5,7 +5,8 @@ The ZichtMessagesBundle provides an Doctrine entity and admin screens
  convenience.
  
 ## Maintainer ##
-This library is maintained by Boudewijn.
+* Boudewijn
+* Philip
 
 ## Admin ##
 The admin is based on the SonataAdminBundle.

@@ -186,7 +186,7 @@ class MessageManager
 
         /** Prepare some sql statements */
         $messageSelect = $conn->prepare(
-            "SELECT id FROM message WHERE message = ? AND domain = ?"
+            "SELECT id FROM message WHERE BINARY(message) = ? AND BINARY(domain) = ?"
         );
         $messageInsert = $conn->prepare(
             "INSERT INTO message (`message`, `domain`) VALUES (?, ?)"

@@ -36,7 +36,7 @@ class Message
 
     /**
      * @var string
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="string", length=255)
      */
     public $message;
 

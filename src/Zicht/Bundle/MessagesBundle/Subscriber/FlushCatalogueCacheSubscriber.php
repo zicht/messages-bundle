@@ -77,8 +77,10 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
      */
     public function flushCache()
     {
-        call_user_func($this->helper);
-        $this->isDirty = false;
+        if ($this->isDirty) {
+            call_user_func($this->helper);
+            $this->isDirty = false;
+        }
     }
 
 

@@ -1,27 +1,23 @@
-admin.label:
-    messages_admin: Template Titels En Teksten
-
-list:
-    label_message: Template titel
-    label_domain: Vertaling domein
-
-filter:
-    label_message: Template titel
-    label_domain: Vertaling domein
-
-form:
-    label_message: Template titel
-    label_domain: Vertaling domein
-    label_translation: Vertaling
-    label_translations: Vertalingen
-    label_locale: Taal
-    label_state: Status
-
+admin:
+    label:
+        messages_admin: Template Titels En Teksten
 breadcrumb:
     link_message_list: Template Titels En Teksten
-
+filter:
+    label_domain: Vertaling domein
+    label_message: Template titel
+form:
+    label_domain: Vertaling domein
+    label_locale: Taal
+    label_message: Template titel
+    label_state: Status
+    label_translation: Vertaling
+    label_translations: Vertalingen
+list:
+    label_domain: Vertaling domein
+    label_message: Template titel
 message:
     state:
-        unknown: Onbekend
         import: Geimporteerd
+        unknown: Onbekend
         user: Aangepast

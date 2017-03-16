@@ -1,27 +1,23 @@
-admin.label:
-    messages_admin: Messages
-
-list:
-    label_message: Message
-    label_domain: Message domain
-
-filter:
-    label_message: Message
-    label_domain: Message domain
-
-form:
-    label_message: Message
-    label_domain: Message domain
-    label_translation: Translation
-    label_translations: Translations
-    label_locale: Locale
-    label_state: State
-
+admin:
+    label:
+        messages_admin: Messages
 breadcrumb:
     link_message_list: Messages
-
+filter:
+    label_domain: Message domain
+    label_message: Message
+form:
+    label_domain: Message domain
+    label_locale: Locale
+    label_message: Message
+    label_state: State
+    label_translation: Translation
+    label_translations: Translations
+list:
+    label_domain: Message domain
+    label_message: Message
 message:
     state:
-        unknown: Unknown
         import: Imported
+        unknown: Unknown
         user: Changed

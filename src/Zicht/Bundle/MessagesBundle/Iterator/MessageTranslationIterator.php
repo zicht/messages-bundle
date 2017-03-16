@@ -32,6 +32,13 @@ class MessageTranslationIterator implements \Iterator
     /** @var mixed */
     protected $value;
 
+    /**
+     * MessageTranslationIterator constructor.
+     *
+     * @param Statement $statement
+     * @param string $keyKey
+     * @param string $valueKey
+     */
     public function __construct(Statement $statement, $keyKey = 'key', $valueKey = 'value')
     {
         $this->statement = $statement;
@@ -41,6 +48,9 @@ class MessageTranslationIterator implements \Iterator
         $this->value = null;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function next()
     {
         if (null === ($row = $this->statement->fetch())) {
@@ -52,21 +62,33 @@ class MessageTranslationIterator implements \Iterator
         }
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function valid()
     {
         return null !== $this->key && null !== $this->value;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function key()
     {
         return $this->key;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function current()
     {
         return $this->value;
     }
 
+    /**
+     * @{inheritDoc}
+     */
     public function rewind()
     {
         throw new \RuntimeException('rewind is not supported for RowIterator');

@@ -24,15 +24,6 @@ class MessageTranslationAdmin extends Admin
     protected $parentAssociationMapping = 'message';
 
     /**
-     * available states
-     */
-    const STATE_CHOICES = array(
-        MessageTranslation::STATE_UNKNOWN => 'message.state.unknown',
-        MessageTranslation::STATE_IMPORT => 'message.state.import',
-        MessageTranslation::STATE_USER => 'message.state.user',
-    );
-
-    /**
      * @{inheritDoc}
      */
     public function configureShowFields(ShowMapper $showMapper)
@@ -48,14 +39,14 @@ class MessageTranslationAdmin extends Admin
         $translator = $this->configurationPool->getContainer()->get('translator');
         $translationDomain = $this->getTranslationDomain();
         $translate = function ($value) use ($translator, $translationDomain) {
-            return $translator->trans($value, array(), $translationDomain);
+            return $translator->trans($value, [], $translationDomain);
         };
 
         $formMapper
             ->with('General')
-                ->add('locale', null, array('required' => true))
-                ->add('translation', null, array('required' => false))
-                ->add('state', 'choice', array('disabled' => true, 'choices' => array_map($translate, $this::STATE_CHOICES)))
+                ->add('locale', null, ['required' => true])
+                ->add('translation', null, ['required' => false])
+                ->add('state', 'choice', ['disabled' => true, 'choices' => array_map($translate, $this->getStateChoices())])
             ->end();
     }
 
@@ -73,5 +64,19 @@ class MessageTranslationAdmin extends Admin
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper->add('translation');
+    }
+
+    /**
+     * Returns available states
+     *
+     * @return array
+     */
+    protected function getStateChoices()
+    {
+        return [
+            MessageTranslation::STATE_UNKNOWN => 'message.state.unknown',
+            MessageTranslation::STATE_IMPORT => 'message.state.import',
+            MessageTranslation::STATE_USER => 'message.state.user',
+        ];
     }
 }

@@ -32,6 +32,9 @@ class MessageTranslationIterator implements \Iterator
     /** @var mixed */
     protected $value;
 
+    /** @var boolean */
+    protected $isValid;
+
     /**
      * MessageTranslationIterator constructor.
      *
@@ -46,6 +49,7 @@ class MessageTranslationIterator implements \Iterator
         $this->valueKey = $valueKey;
         $this->key = null;
         $this->value = null;
+        $this->isValid = true;
     }
 
     /**
@@ -56,6 +60,7 @@ class MessageTranslationIterator implements \Iterator
         if (null === ($row = $this->statement->fetch())) {
             $this->key = null;
             $this->value = null;
+            $this->isValid = false;
         } else {
             $this->key = $row[$this->keyKey];
             $this->value = $row[$this->valueKey];
@@ -67,7 +72,7 @@ class MessageTranslationIterator implements \Iterator
      */
     public function valid()
     {
-        return null !== $this->key && null !== $this->value;
+        return $this->isValid;
     }
 
     /**
@@ -95,5 +100,6 @@ class MessageTranslationIterator implements \Iterator
 
         $this->key = null;
         $this->value = null;
+        $this->isValid = true;
     }
 }

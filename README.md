@@ -19,6 +19,8 @@ Some utility console tools are available.
 * Add the db file for each domain-locale combination, for instance: message.en.db
 * Add a translation via the CMS.
 * Clear the cache with `php app/console cache:clear`
+* All existing message states will be *unknown*, you need to update these once by running
+  `zicht:messages:load --sync`
 
 ## Message state ##
 The messages-bundle maintains a state for each message, this state can

@@ -13,6 +13,7 @@ form:
     label_message: Message
     label_domain: Message domain
     label_translation: Translation
+    label_translations: Translations
     label_locale: Locale
     label_state: State
 

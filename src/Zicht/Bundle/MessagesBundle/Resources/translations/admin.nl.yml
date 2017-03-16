@@ -13,6 +13,7 @@ form:
     label_message: Template titel
     label_domain: Vertaling domein
     label_translation: Vertaling
+    label_translations: Vertalingen
     label_locale: Taal
     label_state: Status
 

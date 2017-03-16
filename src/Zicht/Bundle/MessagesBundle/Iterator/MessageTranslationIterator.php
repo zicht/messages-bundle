@@ -91,6 +91,9 @@ class MessageTranslationIterator implements \Iterator
      */
     public function rewind()
     {
-        throw new \RuntimeException('rewind is not supported for RowIterator');
+        // Can not implement this function... but can not raise an exception either.
+
+        $this->key = null;
+        $this->value = null;
     }
 }

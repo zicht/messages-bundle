@@ -6,7 +6,6 @@
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Zicht\Bundle\MessagesBundle\Iterator\MessageTranslationIterator;
 use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
@@ -21,16 +20,18 @@ class MessageRepository extends EntityRepository implements TranslationsReposito
      *
      * @param string $locale
      * @param string $domain
-     * @return MessageTranslationIterator
+     * @return \Generator
      */
     public function getTranslations($locale, $domain)
     {
         $conn = $this->getEntityManager()->getConnection();
-        $statement = $conn->executeQuery(
+        $stmt = $conn->executeQuery(
             'SELECT m.message, t.translation FROM message m JOIN message_translation t ON (t.message_id = m.id AND t.locale = ? ) WHERE m.domain = ?',
             [$locale, $domain]
         );
-        return new MessageTranslationIterator($statement, 'message', 'translation');
+        while ($row = $stmt->fetch()) {
+            yield $row['message'] => $row['translation'];
+        }
     }
 
     /**

@@ -205,6 +205,16 @@ class MessageManager
         foreach ($catalogue->all() as $domain => $messages) {
             $loaded += count($messages);
             foreach ($messages as $key => $translation) {
+
+                // This check is to prevent trying to insert a ~ value, which will result in trying to insert a null value (=> exception)
+                if (null === $translation) {
+
+                    // Skip this message, so don't count it as a loaded message
+                    $loaded = $loaded - 1;
+
+                    continue;
+                }
+
                 try {
                     $messageSelect->execute(array($key, $domain));
                     if (false !== ($mid = $messageSelect->fetchColumn(0))) {

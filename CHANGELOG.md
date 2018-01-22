@@ -1,5 +1,19 @@
-# 2.5.0
+# Change Log
+All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+and this project adheres to [Semantic Versioning](http://semver.org/).
+
+## [Unreleased]
+### Added|Changed|Deprecated|Removed|Fixed|Security
+Nothing so far
+
+## 3.0.0 - 2018-01-16
+### Changed
+From this version on the minimal PHP requirement is `7.0`
+
+## 2.5.0
+### Added
 * Adds a `--sync` flag to the zicht:messages:load command which updates the 
   state flag of all translations in the database to the correct value.
 

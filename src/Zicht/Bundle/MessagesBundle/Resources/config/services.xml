@@ -1,6 +1,6 @@
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
     <parameters>
         <parameter key="zicht_messages.entity">Zicht\Bundle\MessagesBundle\Entity\Message</parameter>
         <parameter key="zicht_messages.entity_manager">null</parameter>
@@ -8,21 +8,29 @@
         <parameter key="zicht_messages.translation_cache_pattern">catalogue*</parameter>
     </parameters>
     <services>
-        <service id="_doctrine.manager" factory-service="doctrine" factory-method="getManager" class="Doctrine\ORM\EntityManager">
+        <service id="_doctrine.manager" class="Doctrine\ORM\EntityManager">
+            <factory service="doctrine"
+                     method="getManager"
+            />
+
             <argument>%zicht_messages.entity_manager%</argument>
         </service>
-        <service id="zicht_messages.repository" factory-service="_doctrine.manager" factory-method="getRepository" class="Zicht\Bundle\MessagesBundle\TranslationsRepository">
+        <service id="zicht_messages.repository"
+                 class="Zicht\Bundle\MessagesBundle\TranslationsRepository">
+            <factory service="_doctrine.manager"
+                     method="getRepository"
+            />
             <argument>%zicht_messages.entity%</argument>
         </service>
-       <service id="translation.loader.zicht_messages" class="Zicht\Bundle\MessagesBundle\Translation\Loader">
-           <tag name="translation.loader" alias="db" />
-           <call method="setRepository">
-               <argument type="service" id="zicht_messages.repository" />
-           </call>
-       </service>
+        <service id="translation.loader.zicht_messages" class="Zicht\Bundle\MessagesBundle\Translation\Loader">
+            <tag name="translation.loader" alias="db"/>
+            <call method="setRepository">
+                <argument type="service" id="zicht_messages.repository"/>
+            </call>
+        </service>
         <service id="translation.message_update_subscriber" class="Zicht\Bundle\MessagesBundle\Subscriber\FlushCatalogueCacheSubscriber">
             <tag name="doctrine.event_subscriber" connection="default"/>
-            <argument type="service" id="zicht_messages.flush_cache_helper" />
+            <argument type="service" id="zicht_messages.flush_cache_helper"/>
             <argument>%zicht_messages.entity%</argument>
         </service>
         <service id="zicht_messages.flush_cache_helper" class="Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper">
@@ -33,5 +41,5 @@
             <argument type="service" id="doctrine"/>
             <argument type="service" id="zicht_messages.flush_cache_helper"/>
         </service>
-   </services>
+    </services>
 </container>

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 4.0.0 - 2018-06-22
+### Added
+- Support for Symfony 3.x and Twig 2.x
+### Removed
+- Support for Symfony 2.x and Twig 1.x
+
 ## 3.0.0 - 2018-01-16
 ### Changed
 From this version on the minimal PHP requirement is `7.0`

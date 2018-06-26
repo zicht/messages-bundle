@@ -22,6 +22,19 @@ Some utility console tools are available.
 * All existing message states will be *unknown*, you need to update these once by running
   `zicht:messages:load --sync`
 
+## Configure manual cache clear ##
+Edit your `zicht_admin.yml` and add:
+
+```yaml
+zicht_admin:
+    rc:
+        messages:
+            route: zicht_messages_rc_flush
+            method: DELETE
+            title: Clear translation cache
+            button: Clear
+```
+
 ## Message state ##
 The messages-bundle maintains a state for each message, this state can
  be either *import*, *user*, or *unknown*.  You can configure z to 

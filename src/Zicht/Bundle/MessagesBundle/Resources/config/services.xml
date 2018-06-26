@@ -33,5 +33,8 @@
             <argument type="service" id="doctrine"/>
             <argument type="service" id="zicht_messages.flush_cache_helper"/>
         </service>
+        <service id="zicht_messages.controller.rc" class="Zicht\Bundle\MessagesBundle\Controller\RcController">
+            <argument>%zicht_messages.translation_cache%</argument>
+        </service>
    </services>
 </container>

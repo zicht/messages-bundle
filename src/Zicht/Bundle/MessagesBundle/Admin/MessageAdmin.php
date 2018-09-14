@@ -49,7 +49,7 @@ class MessageAdmin extends Admin
     public function configureFormFields(FormMapper $formMapper)
     {
         // add the collection type for existing messages.
-        $formMapper->with('General')
+        $formMapper->with('tab.general')
             ->add('message', null, array('required' => true))
             ->add(
                 'domain',

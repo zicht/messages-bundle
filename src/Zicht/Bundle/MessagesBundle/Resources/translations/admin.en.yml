@@ -1,8 +1,9 @@
 admin:
     label:
-        messages_admin: Messages
+        messages_admin: Translations
 breadcrumb:
-    link_message_list: Messages
+    link_message_list: Translation list
+    link_message_create: Create
 filter:
     label_domain: Message domain
     label_message: Message
@@ -21,3 +22,5 @@ message:
         import: Imported
         unknown: Unknown
         user: Changed
+tab:
+    General: General

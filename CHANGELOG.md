@@ -14,13 +14,19 @@ Nothing so far
 ### Removed
 - Support for Symfony 2.x and Twig 1.x
 
+## 3.1.0 - 2018-06-25
+### Added
+- There is now a RC (Remove Control) route available that clears the
+  translation cache.  This is in-line with how Redis and Varnish cache
+  can be manually cleared in the CMS.
+
 ## 3.0.0 - 2018-01-16
 ### Changed
 From this version on the minimal PHP requirement is `7.0`
 
 ## 2.5.0
 ### Added
-* Adds a `--sync` flag to the zicht:messages:load command which updates the 
+* Adds a `--sync` flag to the zicht:messages:load command which updates the
   state flag of all translations in the database to the correct value.
 
 

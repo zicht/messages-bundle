@@ -1,8 +1,9 @@
 admin:
     label:
-        messages_admin: Template Titels En Teksten
+        messages_admin: Vertalingen
 breadcrumb:
-    link_message_list: Template Titels En Teksten
+    link_message_list: Vertaling lijst
+    link_message_create: Aanmaken
 filter:
     label_domain: Vertaling domein
     label_message: Template titel
@@ -21,3 +22,5 @@ message:
         import: Geimporteerd
         unknown: Onbekend
         user: Aangepast
+tab:
+    general: Algemeen

@@ -72,9 +72,9 @@ class MessageTranslationAdmin extends Admin
     protected function getStateChoices()
     {
         return [
-            MessageTranslation::STATE_UNKNOWN => 'message.state.unknown',
-            MessageTranslation::STATE_IMPORT => 'message.state.import',
-            MessageTranslation::STATE_USER => 'message.state.user',
+            'message.state.unknown' => MessageTranslation::STATE_UNKNOWN,
+            'message.state.import' => MessageTranslation::STATE_IMPORT,
+            'message.state.user' => MessageTranslation::STATE_USER,
         ];
     }
 }

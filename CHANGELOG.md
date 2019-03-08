@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added|Changed|Deprecated|Removed|Fixed|Security
-Nothing so far
+- Updated admin message state choices (Symfony forced flipping the
+  keys and values in choice form field options)
 
 ## 4.0.0 - 2018-06-22
 ### Added

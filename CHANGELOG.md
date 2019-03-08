@@ -6,14 +6,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added|Changed|Deprecated|Removed|Fixed|Security
+Nothing so far
+
+## 4.0.2 - 2019-03-08
+### Changed
 - Updated admin message state choices (Symfony forced flipping the
   keys and values in choice form field options)
+
+## 4.0.1 - 2018-09-14
+### Added
+- There is now a RC (Remove Control) route available that clears the
+  translation cache. This is in-line with how Redis and Varnish cache
+  can be manually cleared in the CMS.
+- Added english translations
 
 ## 4.0.0 - 2018-06-22
 ### Added
 - Support for Symfony 3.x and Twig 2.x
 ### Removed
 - Support for Symfony 2.x and Twig 1.x
+
+## 3.1.1 - 2018-09-14
+### Added
+- Added english translations
 
 ## 3.1.0 - 2018-06-25
 ### Added

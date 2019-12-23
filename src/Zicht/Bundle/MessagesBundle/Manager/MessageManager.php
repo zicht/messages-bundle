@@ -2,6 +2,7 @@
 /**
  * @copyright Zicht online <http://zicht.nl>
  */
+
 namespace Zicht\Bundle\MessagesBundle\Manager;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
@@ -13,7 +14,6 @@ use Zicht\Bundle\MessagesBundle\Entity\Message;
 use Zicht\Bundle\MessagesBundle\Entity\MessageRepository;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
-
 
 /**
  * Central management service for messages
@@ -59,7 +59,6 @@ class MessageManager
         $this->locales = $locales;
     }
 
-
     /**
      * @return array
      */
@@ -67,7 +66,6 @@ class MessageManager
     {
         return $this->locales;
     }
-
 
     /**
      * Adds the missing translations for each of the locales configured.
@@ -118,14 +116,14 @@ class MessageManager
         $where[MessageTranslation::STATE_USER] = [];
         foreach ($catalogue->all() as $domain => $messages) {
             foreach ($messages as $key => $translation) {
-                $where[MessageTranslation::STATE_IMPORT][]= vsprintf(
+                $where[MessageTranslation::STATE_IMPORT][] = vsprintf(
                     '(locale=%s AND domain=%s AND message=%s AND translation=%s COLLATE utf8_bin)',
                     array_map(
                         [$conn, 'quote'],
                         [$catalogue->getLocale(), $domain, $key, $translation]
                     )
                 );
-                $where[MessageTranslation::STATE_USER][]= vsprintf(
+                $where[MessageTranslation::STATE_USER][] = vsprintf(
                     '(locale=%s AND domain=%s AND message=%s AND translation <> %s COLLATE utf8_bin)',
                     array_map(
                         [$conn, 'quote'],
@@ -200,7 +198,6 @@ class MessageManager
             "UPDATE message_translation SET `locale` = ?, `translation` = ?, `state` = ? WHERE message_translation_id = ? AND message_id = ?"
         );
 
-
         foreach ($catalogue->all() as $domain => $messages) {
             $loaded += count($messages);
             foreach ($messages as $key => $translation) {
@@ -210,7 +207,7 @@ class MessageManager
                         $translationSelect->execute(array($mid, $catalogue->getLocale()));
                         $ret = $translationSelect->fetchAll();
                         if (!empty($ret)) {
-                            list($tid, $translationState) = array_values(current($ret));
+                            [$tid, $translationState] = array_values(current($ret));
                             if (!empty($overwrite[$translationState])) {
                                 $translationUpdate->execute(array($catalogue->getLocale(), $translation, $state, $tid, $mid));
                                 $updated += $translationUpdate->rowCount();
@@ -260,7 +257,6 @@ class MessageManager
         return $this->doctrine->getRepository('\Zicht\Bundle\MessagesBundle\Entity\Message');
     }
 
-
     /**
      * Does some sanity checks
      *
@@ -279,20 +275,23 @@ class MessageManager
                 $translator->setLocale($translation->locale);
                 $translated = $translator->trans($message->message, array(), $message->domain);
 
-                $translationFile = 'Resources/translations/' . $message->domain . '.' . $translation->locale . '.db';
-                if (!is_file($kernelRoot . '/' . $translationFile)) {
-                    if ($fix === true) {
-                        touch($kernelRoot . '/' . $translationFile);
-                        $msg = 'Translation file app/' . $translationFile . ' created';
+                $translationsDir = $kernelRoot . '/translations/';
+                $translationFile = $translationsDir . $message->domain . '.' . $translation->locale . '.db';
+                if (!is_file($translationFile)) {
+                    if (!is_dir($translationsDir)) {
+                        $msg = 'Translations directory ' . $translationsDir . ' does not exist';
+                    } elseif ($fix === true) {
+                        touch($translationFile);
+                        $msg = 'Translation file ' . $translationFile . ' created';
                     } else {
-                        $msg = 'Translation file app/' . $translationFile . ' is missing. This probably causes some messages not to load';
+                        $msg = 'Translation file ' . $translationFile . ' is missing. This probably causes some messages not to load';
                     }
                     if (!in_array($msg, $issues)) {
-                        $issues[]= $msg;
+                        $issues[] = $msg;
                     }
                 }
                 if ($translated != $translation->translation) {
-                    $issues[]= sprintf(
+                    $issues[] = sprintf(
                         "Message '%s' from domain '%s' in locale '%s' translates as '%s', but '%s' expected",
                         $message->message,
                         $message->domain,

@@ -10,6 +10,7 @@
             <argument>SonataAdminBundle:CRUD</argument>
             <call method="addChild">
                 <argument type="service" id="zicht_messages.admin.message_translation"/>
+                <argument>translations</argument>
             </call>
             <call method="setTranslationDomain">
                 <argument>admin</argument>

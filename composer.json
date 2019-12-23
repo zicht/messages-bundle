@@ -8,11 +8,11 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "sonata-project/admin-bundle": "^3",
-        "symfony/yaml": "^3.4",
-        "symfony/finder": "^3.4",
-        "doctrine/doctrine-bundle": "^1.6",
+        "php": "^7.1",
+        "sonata-project/admin-bundle": "^3.35",
+        "symfony/yaml": "^4.4",
+        "symfony/finder": "^4.4",
+        "doctrine/doctrine-bundle": "^2.0",
         "doctrine/orm": "^2.5"
     },
     "require-dev": {

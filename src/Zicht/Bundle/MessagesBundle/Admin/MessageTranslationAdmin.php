@@ -10,6 +10,7 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 
 /**
@@ -19,8 +20,6 @@ use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
  */
 class MessageTranslationAdmin extends Admin
 {
-    protected $parentAssociationMapping = 'message';
-
     /**
      * @{inheritDoc}
      */
@@ -42,9 +41,9 @@ class MessageTranslationAdmin extends Admin
 
         $formMapper
             ->with('General')
-                ->add('locale', null, ['required' => true])
-                ->add('translation', null, ['required' => false])
-                ->add('state', 'choice', ['disabled' => true, 'choices' => array_map($translate, $this->getStateChoices())])
+            ->add('locale', null, ['required' => true])
+            ->add('translation', null, ['required' => false])
+            ->add('state', ChoiceType::class, ['disabled' => true, 'choices' => array_map($translate, $this->getStateChoices())])
             ->end();
     }
 

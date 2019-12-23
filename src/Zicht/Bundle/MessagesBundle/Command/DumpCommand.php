@@ -11,19 +11,30 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Yaml\Yaml;
+use Zicht\Bundle\MessagesBundle\Translation\Loader;
 
 /**
  * Add a message to the database message catalogue.
  */
 class DumpCommand extends ContainerAwareCommand
 {
+    protected static $defaultName = 'zicht:messages:dump';
+
+    /** @var Loader */
+    private $loader;
+
+    public function __construct(Loader $loader, string $name = null)
+    {
+        parent::__construct($name);
+        $this->loader = $loader;
+    }
+
     /**
      * @{inheritDoc}
      */
     public function configure()
     {
         $this
-            ->setName('zicht:messages:dump')
             ->setDescription('Dump all messages from the translation files and database to stdout')
             ->addArgument('locale', InputArgument::REQUIRED, "The locale to dump messages for")
             ->addArgument('domain', InputArgument::OPTIONAL, "The domain to dump messages for", 'messages')
@@ -36,7 +47,7 @@ class DumpCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         /** @var $loader \Zicht\Bundle\MessagesBundle\Translation\Loader */
-        $loader = $this->getContainer()->get('translation.loader.zicht_messages');
+        $loader = $this->loader;
         $catalogue = $loader->load('', $input->getArgument('locale'), $input->getArgument('domain'));
 
         $messages = $catalogue->all($input->getArgument('domain'));

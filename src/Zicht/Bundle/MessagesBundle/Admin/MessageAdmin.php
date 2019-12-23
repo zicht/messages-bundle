@@ -10,6 +10,9 @@ use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
+use Sonata\Form\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Zicht\Bundle\MessagesBundle\Entity\Message;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
@@ -51,7 +54,7 @@ class MessageAdmin extends Admin
             ->add('message', null, array('required' => true))
             ->add(
                 'domain',
-                'choice',
+                ChoiceType::class,
                 array('required' => true, 'choices' => $this->messageManager->getRepository()->getDomains())
             )
             ->end();
@@ -61,7 +64,7 @@ class MessageAdmin extends Admin
                 ->with('General')
                 ->add(
                     'translations',
-                    'sonata_type_collection',
+                    CollectionType::class,
                     array(),
                     array(
                         'edit' => 'inline',
@@ -103,12 +106,12 @@ class MessageAdmin extends Admin
             'domain',
             null,
             array(),
-            'choice',
+            ChoiceType::class,
             array('choices' => $this->messageManager->getRepository()->getDomains())
         )
             ->add(
                 'message',
-                'doctrine_orm_callback',
+                CallbackFilter::class,
                 array(
                     'callback' => array($this, 'filteredOnTranslations')
                 )
@@ -132,7 +135,7 @@ class MessageAdmin extends Admin
         if (!$value['value']) {
             return false;
         }
-        
+
         $queryBuilder->leftJoin(sprintf('%s.translations', $alias), 't');
 
         $queryBuilder->andWhere(

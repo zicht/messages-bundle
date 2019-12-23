@@ -5,7 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -13,19 +13,35 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
+use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
+use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 
 /**
  * This command loads messages from predefined message configuration files.
  */
-class LoadCommand extends ContainerAwareCommand
+class LoadCommand extends Command
 {
+    protected static $defaultName = 'zicht:messages:load';
+
+    /** @var MessageManager */
+    private $messageManager;
+
+    /** @var FlushCatalogueCacheHelper */
+    private $cacheHelper;
+
+    public function __construct(MessageManager $messageManager, FlushCatalogueCacheHelper $cacheHelper, string $name = null)
+    {
+        parent::__construct($name);
+        $this->messageManager = $messageManager;
+        $this->cacheHelper = $cacheHelper;
+    }
+
     /**
      * @{inheritDoc}
      */
     protected function configure()
     {
         $this
-            ->setName('zicht:messages:load')
             ->setDescription('Load messages from a source file into the database')
             ->addArgument('file', InputArgument::REQUIRED | InputArgument::IS_ARRAY, 'File to load the messages from.  Filename MUST match the pattern: "NAME.LOCALE.EXTENTION')
             ->addOption('sync', null, InputOption::VALUE_NONE, 'Whether to sync the status in the database before loading the file (useful for migration purposes)')
@@ -52,8 +68,8 @@ class LoadCommand extends ContainerAwareCommand
             'yml' => new YamlFileLoader()
         );
 
-        $messageManager = $this->getContainer()->get('zicht_messages.manager');
-        $cacheHelper = $this->getContainer()->get('zicht_messages.flush_cache_helper');
+        $messageManager = $this->messageManager;
+        $cacheHelper = $this->cacheHelper;
         $totalNumUpdated = 0;
 
         $messageManager->transactional(

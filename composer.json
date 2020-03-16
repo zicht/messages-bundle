@@ -18,6 +18,9 @@
     "require-dev": {
         "phpunit/phpunit": "^4"
     },
+    "suggest": {
+        "google/cloud-translate": "To use the TranslateCommand with batch-translations through the Google Translate API"
+    },
     "minimum-stability": "stable",
     "autoload": {
         "psr-0": {

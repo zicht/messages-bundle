@@ -45,5 +45,9 @@
         <service id="zicht_messages.controller.rc" class="Zicht\Bundle\MessagesBundle\Controller\RcController">
             <argument>%zicht_messages.translation_cache%</argument>
         </service>
+
+        <service id="Zicht\Bundle\MessagesBundle\Command\TranslateCommand" class="Zicht\Bundle\MessagesBundle\Command\TranslateCommand">
+            <tag name="console.command" command="zicht:messages:translate" />
+        </service>
    </services>
 </container>

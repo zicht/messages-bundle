@@ -57,16 +57,19 @@ class TranslateCommand extends Command
         $file = new File($input->getArgument('file'));
         switch ($file->getExtension()) {
             case 'xlf':
-                $this->handleXlf($file, $target);
+                $this->handleXlf($file, $source, $target);
                 break;
             case 'yaml':
             case 'yml':
+                if (!$target) {
+                    throw new \UnexpectedValueException('Please provide the targetlanguage: --target=xx');
+                }
                 $this->handleYaml($file, $source, $target);
                 break;
         }
     }
 
-    private function handleXlf(File $file, string $target)
+    private function handleXlf(File $file, string $source, string $target = null)
     {
         $doc = new \DOMDocument();
         $doc->loadXML(file_get_contents($file->getPathname()));
@@ -91,7 +94,7 @@ class TranslateCommand extends Command
                 $batch[] = str_replace($originalReplacements, $replacementSet, $nodeValue);
                 break;
             }
-            $results = $this->translateValues($batch, $fileNode->getAttribute('source-language'), ($target ? $target : $fileNode->getAttribute('target-language')));
+            $results = $this->translateValues($batch, $source, ($target ? $target : $fileNode->getAttribute('target-language')));
             foreach ($fileNode->getElementsByTagName('trans-unit') as $unitIndex => $translation) {
                 $translation->getElementsByTagName('target')->item(0)->nodeValue = $this->revertReplacements($results[$unitIndex], $allOriginalReplacements[$unitIndex]);
                 break;

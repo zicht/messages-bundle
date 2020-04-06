@@ -54,6 +54,74 @@ to you z config:
 messages:
     overwrite_compatibility: false
 ```
+
+## Automatic translation
+Leverage the `zicht:message:translate` command with automatic translation through an API of choice.
+Kickstart the usage by using the provided Google Translate API.
+
+### Setup
+
+`composer require google/cloud-translate`
+
+### Configuration
+Define the Google Translator as a service in your project. Your API key should be the private key from a service account (https://cloud.google.com/translate/docs/basic/setup-basic)
+
+```yaml
+parameters:
+    env(GOOGLE_API_KEY): '%kernel.root_dir%/config/your-google-api-key.json'
+```
+```xml
+<service id="Zicht\Bundle\MessagesBundle\Translator\GoogleTranslator" class="Zicht\Bundle\MessagesBundle\Translator\GoogleTranslator">
+    <argument key="$googleTranslateServiceAccount">%env(json:file:resolve:GOOGLE_API_KEY)%</argument>
+</service>
+```
+
+Add a `CompilerPass` to register the service on the `TranslateCommand`:
+
+```php
+/**
+ * @{inheritDoc}
+ */
+public function process(ContainerBuilder $container)
+{
+    $container
+        ->getDefinition(TranslateCommand::class)
+        ->addMethodCall('setBatchTranslator', [new Reference(GoogleTranslator::class)]);
+}
+```
+
+### Usage
+
+In this example we have copied a `.nl.yaml` to a `es.yaml` and we are informing the command that the sourcelanguage is `nl` and the
+targetlanguage should be `es`. As we have already renamed the file, only contents of this file will be rewritten.
+
+```shell script
+php bin/console zicht:message:translte /dir/to/project/translations/validators.es.(yaml|xlf) --source=nl --target=es
+```
+
+### Conditions
+
+The targetlanguage (`--target=xx`) is required for `yaml` as it cannot be autodiscovered. 
+For `xlf` we use the `target-language` attribute inside the file, but can be forced by using the target-option as well. 
+
+Parameters in the translations are rewritten and not sent to the translation-api to prevent translating them. They should be in the default format of `%param%`.
+
+If your file is in `xliff`, we only support `1.2`.
+
+If your file is in `yaml`, and has hierarchical contents, this will be lost and the file will be rewritten with single lines containing the full path to your translation.
+
+#### Before
+
+```yaml
+app:
+   index:
+        title: Abc
+``` 
+#### After
+
+```yaml
+app.index.title: Abc
+```
+
 ## Maintainer(s) ##
 * Boudewijn Schoon <boudewijn@zicht.nl>
-* Philip Bergman <philip@zicht.nl>

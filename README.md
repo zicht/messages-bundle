@@ -107,7 +107,7 @@ php bin/console zicht:message:translate /dir/to/project/translations/validators.
 The targetlanguage (`--target=xx`) is required for `yaml` as it cannot be autodiscovered. 
 For `xlf` we use the `target-language` attribute inside the file, but can be forced by using the target-option as well. 
 
-Parameters in the translations are rewritten and not sent to the translation-api to prevent translating them. They should be in the default format of `%param%`.
+Parameters in the translations are rewritten and not sent to the translation-api to prevent translating them. They should be in the format of `%param%`, `!param` or `{param}`.
 
 If your file is in `xliff`, we only support `1.2`.
 

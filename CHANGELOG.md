@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 4.1.0 - 2020-04-30
+### Added
+- Integration for API-based translation of `.yaml` and `.xliff` files. See README for more info.
+
 ## 4.0.2 - 2019-03-08
 ### Changed
 - Updated admin message state choices (Symfony forced flipping the

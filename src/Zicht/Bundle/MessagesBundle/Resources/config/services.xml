@@ -46,8 +46,12 @@
             <argument>%zicht_messages.translation_cache%</argument>
         </service>
 
-        <service id="Zicht\Bundle\MessagesBundle\Command\TranslateCommand" class="Zicht\Bundle\MessagesBundle\Command\TranslateCommand">
+        <service id="Zicht\Bundle\MessagesBundle\Command\TranslateCommand">
             <tag name="console.command" command="zicht:messages:translate" />
+            <argument type="service" id="Zicht\Bundle\MessagesBundle\Translator\MessageTranslator"/>
         </service>
+
+        <service id="Zicht\Bundle\MessagesBundle\Translator\MessageTranslator"/>
+
    </services>
 </container>

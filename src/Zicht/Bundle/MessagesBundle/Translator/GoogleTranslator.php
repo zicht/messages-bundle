@@ -10,6 +10,9 @@ use Google\Cloud\Translate\V2\TranslateClient;
 
 class GoogleTranslator implements BatchTranslatorInterface
 {
+    /** @var int */
+    const BATCH_LIMIT = 100;
+
     /**
      * @var array
      */
@@ -24,7 +27,7 @@ class GoogleTranslator implements BatchTranslatorInterface
     {
         $translator = new TranslateClient(['keyFile' => $this->googleTranslateServiceAccount]);
         $results = [];
-        foreach (array_chunk($batch, 100) as $chunk) {
+        foreach (array_chunk($batch, static::BATCH_LIMIT) as $chunk) {
             $results = array_merge($results, array_column($translator->translateBatch($chunk, ['source' => $sourceLanguage, 'target' => $targetLanguage, 'format' => 'text']), 'text'));
         }
         return $results;

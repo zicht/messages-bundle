@@ -16,7 +16,7 @@
         "doctrine/orm": "^2.5"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4"
+        "phpunit/phpunit": "^8"
     },
     "suggest": {
         "google/cloud-translate": "To use the TranslateCommand with batch-translations through the Google Translate API"
@@ -24,8 +24,12 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-0": {
-            "Zicht": "src/",
-            "ZichtTest": "tests/"
+            "Zicht\\": ["src/"]
+        }
+    },
+    "autoload-dev": {
+        "psr-0": {
+            "Zicht\\": ["tests/"]
         }
     },
     "license": "MIT"

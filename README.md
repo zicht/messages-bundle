@@ -71,21 +71,24 @@ parameters:
     env(GOOGLE_API_KEY): '%kernel.root_dir%/config/your-google-api-key.json'
 ```
 ```xml
-<service id="Zicht\Bundle\MessagesBundle\Translator\GoogleTranslator" class="Zicht\Bundle\MessagesBundle\Translator\GoogleTranslator">
+<service id="Zicht\Bundle\MessagesBundle\Translator\GoogleTranslator">
     <argument key="$googleTranslateServiceAccount">%env(json:file:resolve:GOOGLE_API_KEY)%</argument>
 </service>
 ```
 
-Add a `CompilerPass` to register the service on the `TranslateCommand`:
+Add a `CompilerPass` to register a `BatchTranslatorInterface` on the `MessageTranslator`:
 
 ```php
+use Zicht\Bundle\MessagesBundle\Translator\GoogleTranslator;
+use Zicht\Bundle\MessagesBundle\Translator\MessageTranslator;
+
 /**
- * @{inheritDoc}
+ * {@inheritDoc}
  */
 public function process(ContainerBuilder $container)
 {
     $container
-        ->getDefinition(TranslateCommand::class)
+        ->getDefinition(MessageTranslator::class)
         ->addMethodCall('setBatchTranslator', [new Reference(GoogleTranslator::class)]);
 }
 ```
@@ -96,7 +99,7 @@ In this example we have copied a `.nl.yaml` to a `es.yaml` and we are informing 
 targetlanguage should be `es`. As we have already renamed the file, only contents of this file will be rewritten.
 
 ```shell script
-php bin/console zicht:message:translte /dir/to/project/translations/validators.es.(yaml|xlf) --source=nl --target=es
+php bin/console zicht:message:translate /dir/to/project/translations/validators.es.(yaml|xlf) --source=nl --target=es
 ```
 
 ### Conditions

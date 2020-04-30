@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="en" target-language="nl" datatype="plaintext" original="file.ext">
+        <header>
+            <tool tool-id="symfony" tool-name="Symfony"/>
+        </header>
+        <body>
+            <trans-unit id="a" resname="Frankly, my %dear%, I don't give a %damn%">
+                <source>Frankly, my %dear%, I don't give a %damn%</source>
+                <target>Frankly, my %dear%, I don't give a %damn%</target>
+            </trans-unit>
+            <trans-unit id="b" resname="Toto, I've got a !feeling we're not !in {Kansas} %anymore%">
+                <source>Toto, I've got a !feeling we're not !in {Kansas} %anymore%</source>
+                <target>Toto, I've got a !feeling we're not !in {Kansas} %anymore%</target>
+            </trans-unit>
+            <trans-unit id="c" resname="I see !dead %people%">
+                <source>I see !dead %people%</source>
+                <target>I see !dead %people%</target>
+            </trans-unit>
+            <trans-unit id="d" resname="Keep your {friends} !close, !but {your} %enemies% %closer%">
+                <source>Keep your {friends} !close, !but {your} %enemies% %closer%</source>
+                <target>Keep your {friends} !close, !but {your} %enemies% %closer%</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

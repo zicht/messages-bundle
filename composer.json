@@ -23,13 +23,17 @@
     },
     "minimum-stability": "stable",
     "autoload": {
-        "psr-0": {
-            "Zicht\\": ["src/"]
+        "psr-4": {
+            "Zicht\\Bundle\\MessagesBundle\\": [
+                "src/Zicht/Bundle/MessagesBundle/"
+            ]
         }
     },
     "autoload-dev": {
-        "psr-0": {
-            "Zicht\\": ["tests/"]
+        "psr-4": {
+            "Zicht\\Bundle\\MessagesBundle\\": [
+                "tests/Zicht/Bundle/MessagesBundle/"
+            ]
         }
     },
     "license": "MIT"

@@ -25,14 +25,14 @@
     "autoload": {
         "psr-4": {
             "Zicht\\Bundle\\MessagesBundle\\": [
-                "src/Zicht/Bundle/MessagesBundle/"
+                "src/"
             ]
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Zicht\\Bundle\\MessagesBundle\\": [
-                "tests/Zicht/Bundle/MessagesBundle/"
+                "tests/"
             ]
         }
     },

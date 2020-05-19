@@ -5,7 +5,8 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,14 +17,25 @@ use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 /**
  * Add a message to the database message catalogue.
  */
-class AddCommand extends ContainerAwareCommand
+class AddCommand extends Command
 {
+    protected static $defaultName = 'zicht:messages:add';
+
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    public function __construct(ManagerRegistry $doctrine, string $name = null)
+    {
+        parent::__construct($name);
+        $this->doctrine = $doctrine;
+    }
+
     /**
      * @{inheritDoc}
      */
     protected function configure()
     {
-        $this->setName('zicht:messages:add')
+        $this
             ->setDescription('Add a single message to the database')
             ->addArgument('message', InputArgument::REQUIRED, "The message id")
             ->addArgument('domain', InputArgument::OPTIONAL, "The message domain", 'messages')
@@ -52,7 +64,7 @@ class AddCommand extends ContainerAwareCommand
                 }
             }
         }
-        $this->getContainer()->get('doctrine')->getManager()->persist($message);
-        $this->getContainer()->get('doctrine')->getManager()->flush();
+        $this->doctrine->getManager()->persist($message);
+        $this->doctrine->getManager()->flush();
     }
 }

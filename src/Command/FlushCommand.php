@@ -6,6 +6,7 @@
 namespace Zicht\Bundle\MessagesBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
@@ -14,15 +15,26 @@ use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
  * This command checks if the guids that are present in the local database correspond with the guids that are used
  * in SRO
  */
-class FlushCommand extends ContainerAwareCommand
+class FlushCommand extends Command
 {
+    protected static $defaultName = 'zicht:messages:flush';
+
+    /** @var string */
+    private $cacheDir;
+
+    public function __construct(string $cacheDir, string $name = null)
+    {
+        parent::__construct($name);
+        $this->cacheDir = $cacheDir;
+    }
+
+
     /**
      * @{inheritDoc}
      */
     protected function configure()
     {
         $this
-            ->setName('zicht:messages:flush')
             ->setDescription('Flush symfony\'s message catalogue cache');
     }
 
@@ -31,7 +43,7 @@ class FlushCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $cacheDir = $this->getContainer()->getParameter('kernel.cache_dir') . '/translations';
+        $cacheDir = $this->cacheDir . '/translations';
 
         $helper = new FlushCatalogueCacheHelper($cacheDir);
         $result = $helper();

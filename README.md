@@ -15,7 +15,9 @@ Some utility console tools are available.
 * `zicht:messages:flush` flushes Symfony's translation cache
 
 ## Installing ##
-* Make sure the following directory is present in your project: app/Resources/translations
+* Make sure the `translations/` directory is present in your project.
+  * Using translations is/seems to be dependent on the order of scanned directories.
+    By using this directory we assure we are the last in line, overwriting templates with database.
 * Add the db file for each domain-locale combination, for instance: message.en.db
 * Add a translation via the CMS.
 * Clear the cache with `php app/console cache:clear`

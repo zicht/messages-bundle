@@ -8,10 +8,10 @@
         }
     ],
     "require": {
-        "php": "^7.0",
-        "sonata-project/admin-bundle": "^3",
-        "symfony/yaml": "^3.4",
-        "symfony/finder": "^3.4",
+        "php": "^7.1",
+        "sonata-project/admin-bundle": "^3.35",
+        "symfony/yaml": "^4.4",
+        "symfony/finder": "^4.4",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5"
     },
@@ -25,14 +25,14 @@
     "autoload": {
         "psr-4": {
             "Zicht\\Bundle\\MessagesBundle\\": [
-                "src/Zicht/Bundle/MessagesBundle/"
+                "src/"
             ]
         }
     },
     "autoload-dev": {
         "psr-4": {
             "Zicht\\Bundle\\MessagesBundle\\": [
-                "tests/Zicht/Bundle/MessagesBundle/"
+                "tests/"
             ]
         }
     },

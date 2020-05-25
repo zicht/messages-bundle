@@ -6,6 +6,7 @@
 namespace Zicht\Bundle\MessagesBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -55,9 +56,13 @@ class LoadCommand extends ContainerAwareCommand
         $messageManager = $this->getContainer()->get('zicht_messages.manager');
         $cacheHelper = $this->getContainer()->get('zicht_messages.flush_cache_helper');
         $totalNumUpdated = 0;
+        $totalNumLoaded = 0;
+
+        $progress = new ProgressBar($output, sizeof($files));
+        $progress->setRedrawFrequency(10);
 
         $messageManager->transactional(
-            function () use ($files, $isSync, $loaders, $overwrite, $output, $messageManager, &$totalNumUpdated) {
+            function () use ($files, $isSync, $loaders, $overwrite, $output, $progress, $messageManager, &$totalNumUpdated, &$totalNumLoaded) {
                 foreach ($files as $filename) {
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
 
@@ -74,8 +79,9 @@ class LoadCommand extends ContainerAwareCommand
                             },
                             MessageTranslation::STATE_IMPORT
                         );
-                        $output->writeln(sprintf("<info>%d/%d</info> messages updated/loaded from <info>%s</info>", $numUpdated, $numLoaded, $filename));
+                        $progress->advance();
                         $totalNumUpdated += $numUpdated;
+                        $totalNumLoaded += $numLoaded;
 
                         if ($isSync) {
                             list($import, $user) = $messageManager->syncState($catalogue);
@@ -85,6 +91,10 @@ class LoadCommand extends ContainerAwareCommand
                 }
             }
         );
+
+        $progress->finish();
+        $output->writeln(sprintf("\n<info>%d/%d</info> messages updated/loaded from <info>%d</info> files", $totalNumUpdated, $totalNumLoaded, sizeof($files)));
+
         if ($totalNumUpdated > 0) {
             $cacheHelper();
         }

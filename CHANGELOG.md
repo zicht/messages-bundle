@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.0.1 - 2020-05-25
+### Fixed
+- Forward mere from 4.1.2
+
 ## 5.0.0 - 2020-05-19
 ### Added
 - Support for Symfony 4.x
@@ -15,6 +19,10 @@ Nothing so far
 - Support for Symfony 3.x
 ### Changed
 - Removed Zicht(Test)/Bundle/MessagesBundle/ directory depth: moved all code up directly into src/ and test/
+
+## 4.1.2 - 2020-05-22
+### Fixed
+- Made the `zicht:messages:load` command significantly less verbose
 
 ## 4.1.1 - 2020-05-15
 ### Changed

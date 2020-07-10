@@ -5,7 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Admin;
 
-use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -17,7 +17,7 @@ use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
  *
  * @package Zicht\Bundle\MessagesBundle\Admin
  */
-class MessageTranslationAdmin extends Admin
+class MessageTranslationAdmin extends AbstractAdmin
 {
     protected $parentAssociationMapping = 'message';
 
@@ -44,7 +44,15 @@ class MessageTranslationAdmin extends Admin
             ->with('General')
                 ->add('locale', null, ['required' => true])
                 ->add('translation', null, ['required' => false])
-                ->add('state', 'choice', ['disabled' => true, 'choices' => array_map($translate, $this->getStateChoices())])
+                ->add(
+                    'state',
+                    'choice',
+                    [
+                        'disabled' => true,
+                        'choices' => array_map($translate, $this->getStateChoices()),
+                        'choice_translation_domain' => $this->translationDomain,
+                    ]
+                )
             ->end();
     }
 

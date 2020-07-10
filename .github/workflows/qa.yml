@@ -1,0 +1,19 @@
+name: QA
+
+on:
+    pull_request:
+        branches:
+            - release/*
+
+jobs:
+    translations:
+        runs-on: ubuntu-18.04
+        steps:
+            -   uses: actions/checkout@v2
+            -   uses: actions/setup-python@v2
+                with:
+                    python-version: '3.6'
+            -   run: python -m pip install --upgrade pip
+            -   run: pip install yaz_messaging_plugin
+            -   run: yaz-messaging version
+            -   run: yaz-messaging check

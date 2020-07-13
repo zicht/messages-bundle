@@ -8,9 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.0.2 - 2020-07-13
+### Fixed
+- Forward merge from 4.1.3
+
 ## 5.0.1 - 2020-05-25
 ### Fixed
-- Forward mere from 4.1.2
+- Forward merge from 4.1.2
 
 ## 5.0.0 - 2020-05-19
 ### Added
@@ -19,6 +23,11 @@ Nothing so far
 - Support for Symfony 3.x
 ### Changed
 - Removed Zicht(Test)/Bundle/MessagesBundle/ directory depth: moved all code up directly into src/ and test/
+
+## 4.1.3 - 2020-07-10
+### Fixed
+- Translation cleanup
+- Fix message state (i.e. imported, user, unknown)
 
 ## 4.1.2 - 2020-05-22
 ### Fixed

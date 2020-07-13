@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 4.1.3 - 2020-07-10
+### Fixed
+- Translation cleanup
+- Fix message state (i.e. imported, user, unknown)
+
 ## 4.1.2 - 2020-05-22
 ### Fixed
 - Made the `zicht:messages:load` command significantly less verbose

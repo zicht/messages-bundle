@@ -5,7 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Admin;
 
-use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -17,7 +17,7 @@ use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 /**
  * Admin for the messages catalogue
  */
-class MessageAdmin extends Admin
+class MessageAdmin extends AbstractAdmin
 {
     /**
      * @var MessageManager
@@ -47,7 +47,7 @@ class MessageAdmin extends Admin
     public function configureFormFields(FormMapper $formMapper)
     {
         // add the collection type for existing messages.
-        $formMapper->with('tab.general')
+        $formMapper->with('admin.tab.general')
             ->add('message', null, array('required' => true))
             ->add(
                 'domain',

@@ -6,11 +6,16 @@
 namespace Zicht\Bundle\MessagesBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Translation\Loader\LoaderInterface;
+use Symfony\Component\Translation\Reader\TranslationReader;
+use Symfony\Component\Translation\Reader\TranslationReaderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 
 /**
@@ -22,16 +27,28 @@ class CheckCommand extends Command
 
     private $messagesManager;
 
+    /** @var TranslatorInterface|Translator */
     private $translator;
 
-    private $projectDir;
+    private $projectDir, $cacheDir;
 
-    public function __construct(MessageManager $messageManager, TranslatorInterface $translator, string $projectDir, string $name = null)
+    /** @var TranslationReaderInterface|TranslationReader */
+    private $translationReader;
+
+    private $loader;
+
+    private $flusher;
+
+    public function __construct(FlushCatalogueCacheHelper $flushCatalogueCacheHelper, MessageManager $messageManager, TranslatorInterface $translator, string $projectDir, string $cacheDir, TranslationReaderInterface $translationReader, LoaderInterface $loader, string $name = null)
     {
         parent::__construct($name);
         $this->messagesManager = $messageManager;
         $this->translator = $translator;
         $this->projectDir = $projectDir;
+        $this->translationReader = $translationReader;
+        $this->loader = $loader;
+        $this->cacheDir = $cacheDir;
+        $this->flusher = $flushCatalogueCacheHelper;
     }
 
     /**
@@ -49,6 +66,14 @@ class CheckCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // FIXME move this to a separate command, here only for testing purposes
+        $this->loader->setEnabled(true);
+        $this->flusher->__invoke();
+        $this->translator->warmUp($this->cacheDir);
+        $this->loader->setEnabled(true);
+
+        return;
+
         $issues = $this->messagesManager->check(
             $this->translator,
             $this->projectDir,

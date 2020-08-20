@@ -19,15 +19,23 @@
         </service>
 
         <service id="translation.loader.zicht_messages" class="Zicht\Bundle\MessagesBundle\Translation\Loader">
-            <tag name="translation.loader" alias="db"/>
+            <tag name="translation.loader" alias="zz"/>
             <call method="setRepository">
                 <argument type="service" id="zicht_messages.repository"/>
             </call>
         </service>
 
+        <service id="Zicht\Bundle\MessagesBundle\Translation\CacheHook">
+            <argument type="service" id="translation.loader.zicht_messages"/>
+            <tag name="kernel.cache_warmer"/>
+        </service>
+
         <service id="translation.message_update_subscriber" class="Zicht\Bundle\MessagesBundle\Subscriber\FlushCatalogueCacheSubscriber">
             <tag name="doctrine.event_subscriber" connection="default"/>
             <argument type="service" id="zicht_messages.flush_cache_helper"/>
+            <argument type="service" id="translation.loader.zicht_messages"/>
+            <argument type="service" id="translator"/>
+            <argument>%kernel.cache_dir%</argument>
             <argument>%zicht_messages.entity%</argument>
         </service>
 
@@ -59,9 +67,13 @@
 
         <service id="Zicht\Bundle\MessagesBundle\Command\CheckCommand">
             <tag name="console.command"/>
+            <argument type="service" id="zicht_messages.flush_cache_helper"/>
             <argument type="service" id="zicht_messages.manager"/>
             <argument type="service" id="translator"/>
             <argument>%kernel.project_dir%</argument>
+            <argument>%kernel.cache_dir%</argument>
+            <argument type="service" id="translation.reader"/>
+            <argument type="service" id="translation.loader.zicht_messages"/>
         </service>
 
         <service id="Zicht\Bundle\MessagesBundle\Command\FlushCommand">

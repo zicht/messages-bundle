@@ -2,6 +2,7 @@
 /**
  * @copyright Zicht Online <http://zicht.nl>
  */
+
 namespace Zicht\Bundle\MessagesBundle\Translation;
 
 use Symfony\Component\Translation\MessageCatalogue;
@@ -22,6 +23,10 @@ class Loader implements LoaderInterface
      */
     protected $repository;
 
+    // initially enabled, but disabled during cache:warmup (see CacheHook)
+    // we need to have the loader registered, but not running on cache-warmup as it should not access the DB. We run it manually.
+    private $enabled = true;
+
     /**
      * Set the repository to load the messages from.
      *
@@ -31,6 +36,11 @@ class Loader implements LoaderInterface
     public function setRepository(TranslationsRepository $repo)
     {
         $this->repository = $repo;
+    }
+
+    public function setEnabled(bool $state)
+    {
+        $this->enabled = $state;
     }
 
     /**
@@ -44,6 +54,10 @@ class Loader implements LoaderInterface
     public function load($resource, $locale, $domain = 'messages')
     {
         $catalogue = new MessageCatalogue($locale);
+
+        if (!$this->enabled) {
+            return $catalogue;
+        }
 
         foreach ($this->repository->getTranslations($locale, $domain) as $id => $translation) {
             $catalogue->set($id, $translation, $domain);

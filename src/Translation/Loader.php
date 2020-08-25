@@ -59,8 +59,12 @@ class Loader implements LoaderInterface
             return $catalogue;
         }
 
-        foreach ($this->repository->getTranslations($locale, $domain) as $id => $translation) {
-            $catalogue->set($id, $translation, $domain);
+        try {
+            foreach ($this->repository->getTranslations($locale, $domain) as $id => $translation) {
+                $catalogue->set($id, $translation, $domain);
+            }
+        } catch (\Doctrine\DBAL\Exception\ConnectionException $e) {
+            // Could not connect to the database
         }
 
         return $catalogue;

@@ -1,17 +1,20 @@
 <?php
 /**
- * @copyright Zicht Online <http://zicht.nl>
+ * @copyright Zicht Online <https://zicht.nl>
  */
 
 namespace Zicht\Bundle\MessagesBundle;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Zicht\Bundle\MessagesBundle\DependencyInjection\Compiler\ReorderTranslationResourceFilesPass;
 
-/**
- * Class ZichtMessagesBundle
- *
- * @package Zicht\Bundle\MessagesBundle
- */
 class ZichtMessagesBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new ReorderTranslationResourceFilesPass());
+    }
 }

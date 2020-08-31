@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.0.3 - 2020-08-28
+### Fixed
+- Added a Compiler Pass to place the .db files last to have the database entries processed last (to override existing messages)
+
 ## 5.0.2 - 2020-07-13
 ### Fixed
 - Forward merge from 4.1.3

@@ -12,7 +12,6 @@
         "sonata-project/admin-bundle": "^3.35",
         "symfony/yaml": "^4.4",
         "symfony/finder": "^4.4",
-        "doctrine/doctrine-bundle": "^1.6",
         "doctrine/orm": "^2.5"
     },
     "require-dev": {

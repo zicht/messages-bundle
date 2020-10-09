@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.0.4 - 2020-10-20
+### Removed
+- Unneeded dependency declaration for `doctrine/doctrine-bundle`.
+
 ## 5.0.3 - 2020-08-28
 ### Fixed
 - Added a Compiler Pass to place the .db files last to have the database entries processed last (to override existing messages)

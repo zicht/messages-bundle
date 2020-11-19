@@ -43,6 +43,7 @@
 
         <service id="zicht_messages.controller.rc" class="Zicht\Bundle\MessagesBundle\Controller\RcController">
             <argument>%zicht_messages.translation_cache%</argument>
+            <tag name="controller.service_arguments"/>
         </service>
 
         <!-- Commands -->

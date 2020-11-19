@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.0.5 - 2020-11-19
+### Fixed
+- Missing `controller.service_arguments` for `RcController` so it was not callable.
+
 ## 5.0.4 - 2020-10-20
 ### Removed
 - Unneeded dependency declaration for `doctrine/doctrine-bundle`.

@@ -2,13 +2,16 @@
 /**
  * @copyright Zicht Online <http://zicht.nl>
  */
+
 namespace Zicht\Bundle\MessagesBundle\Subscriber;
 
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Zicht\Bundle\MessagesBundle\Entity;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper as Helper;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
+use Zicht\Bundle\MessagesBundle\Translation\Loader;
 
 /**
  * Subscribes to the Doctrine entity manager to flush Symfony's translation cache
@@ -30,17 +33,26 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
      */
     protected $entity;
 
+    private $loader;
+
+    private $translator;
+
+    private $cacheDir;
+
     /**
      * Construct the subscriber with the passed cachedir.
      *
      * @param FlushCatalogueCacheHelper $helper
      * @param array $entities
      */
-    public function __construct(Helper $helper, $entities)
+    public function __construct(Helper $helper, Loader $loader, TranslatorInterface $translator, string $cacheDir, $entities)
     {
         $this->isDirty = false;
         $this->helper = $helper;
         $this->entity = $entities;
+        $this->loader = $loader;
+        $this->translator = $translator;
+        $this->cacheDir = $cacheDir;
     }
 
 
@@ -73,7 +85,7 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
             foreach ($array as $obj) {
                 foreach ($obj as $element) {
                     if ($element instanceof Entity\Message
-                     || $element instanceof Entity\MessageTranslation
+                        || $element instanceof Entity\MessageTranslation
                     ) {
                         $this->isDirty = true;
                         break 2;
@@ -82,7 +94,14 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
             }
         }
 
-        $this->flushCache();
+
+    }
+
+    public function postFlush()
+    {
+        if ($this->isDirty) {
+            $this->flushCache();
+        }
     }
 
     /**
@@ -93,7 +112,10 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
     public function flushCache()
     {
         if ($this->isDirty) {
+            $this->loader->setEnabled(true);
             call_user_func($this->helper);
+            $this->translator->warmUp($this->cacheDir);
+            $this->loader->setEnabled(false);
             $this->isDirty = false;
         }
     }
@@ -104,6 +126,6 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
      */
     public function getSubscribedEvents()
     {
-        return array(Events::onFlush);
+        return array(Events::onFlush, Events::postFlush);
     }
 }

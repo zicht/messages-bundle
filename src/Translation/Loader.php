@@ -2,8 +2,10 @@
 /**
  * @copyright Zicht Online <http://zicht.nl>
  */
+
 namespace Zicht\Bundle\MessagesBundle\Translation;
 
+use Doctrine\DBAL\ConnectionException;
 use Symfony\Component\Translation\MessageCatalogue;
 use Symfony\Component\Translation\Loader\LoaderInterface;
 use Zicht\Bundle\MessagesBundle\TranslationsRepository;
@@ -22,6 +24,10 @@ class Loader implements LoaderInterface
      */
     protected $repository;
 
+    // initially disabled.
+    // we need to have the loader registered, but not running on cache-warmup as it should not access the DB. We run it manually.
+    private $enabled = false;
+
     /**
      * Set the repository to load the messages from.
      *
@@ -31,6 +37,11 @@ class Loader implements LoaderInterface
     public function setRepository(TranslationsRepository $repo)
     {
         $this->repository = $repo;
+    }
+
+    public function setEnabled(bool $state)
+    {
+        $this->enabled = $state;
     }
 
     /**
@@ -45,8 +56,16 @@ class Loader implements LoaderInterface
     {
         $catalogue = new MessageCatalogue($locale);
 
-        foreach ($this->repository->getTranslations($locale, $domain) as $id => $translation) {
-            $catalogue->set($id, $translation, $domain);
+        if (!$this->enabled) {
+            return $catalogue;
+        }
+
+        try {
+            foreach ($this->repository->getTranslations($locale, $domain) as $id => $translation) {
+                $catalogue->set($id, $translation, $domain);
+            }
+        } catch (ConnectionException $e) {
+            // Could not connect to the database
         }
 
         return $catalogue;

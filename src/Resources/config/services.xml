@@ -28,6 +28,9 @@
         <service id="translation.message_update_subscriber" class="Zicht\Bundle\MessagesBundle\Subscriber\FlushCatalogueCacheSubscriber">
             <tag name="doctrine.event_subscriber" connection="default"/>
             <argument type="service" id="zicht_messages.flush_cache_helper"/>
+            <argument type="service" id="translation.loader.zicht_messages"/>
+            <argument type="service" id="translator"/>
+            <argument>%kernel.cache_dir%</argument>
             <argument>%zicht_messages.entity%</argument>
         </service>
 
@@ -63,6 +66,15 @@
             <argument type="service" id="zicht_messages.manager"/>
             <argument type="service" id="translator"/>
             <argument>%kernel.project_dir%</argument>
+        </service>
+
+        <service id="Zicht\Bundle\MessagesBundle\Command\CacheCommand">
+            <tag name="console.command"/>
+            <argument type="service" id="translator"/>
+            <argument type="service" id="zicht_messages.flush_cache_helper"/>
+            <argument type="service" id="translation.reader"/>
+            <argument type="service" id="translation.loader.zicht_messages"/>
+            <argument>%kernel.cache_dir%</argument>
         </service>
 
         <service id="Zicht\Bundle\MessagesBundle\Command\FlushCommand">

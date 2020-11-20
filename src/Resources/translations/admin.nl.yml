@@ -8,17 +8,17 @@ breadcrumb:
     link_message_list: Vertaling lijst
 filter:
     label_domain: Vertaling domein
-    label_message: Template titel
+    label_message: Bericht
 form:
     label_domain: Vertaling domein
     label_locale: Taal
-    label_message: Template titel
+    label_message: Bericht
     label_state: Status
     label_translation: Vertaling
     label_translations: Vertalingen
 list:
     label_domain: Vertaling domein
-    label_message: Template titel
+    label_message: Bericht
 message:
     state:
         import: Geimporteerd

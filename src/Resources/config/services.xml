@@ -31,7 +31,6 @@
             <argument type="service" id="translation.loader.zicht_messages"/>
             <argument type="service" id="translator"/>
             <argument>%kernel.cache_dir%</argument>
-            <argument>%zicht_messages.entity%</argument>
         </service>
 
         <service id="zicht_messages.flush_cache_helper" class="Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper">
@@ -93,6 +92,14 @@
         </service>
 
         <service id="Zicht\Bundle\MessagesBundle\Translator\MessageTranslator"/>
+
+        <!-- this listener is removed on non-debug envs -->
+        <service id="Zicht\Bundle\MessagesBundle\Subscriber\RequestListener" autowire="true">
+            <argument key="$loader" type="service" id="translation.loader.zicht_messages"/>
+            <argument key="$flusher" type="service" id="zicht_messages.flush_cache_helper"/>
+            <argument key="$cacheDir" type="string">%kernel.cache_dir%</argument>
+            <tag name="kernel.event_listener" event="kernel.request"/>
+        </service>
 
    </services>
 </container>

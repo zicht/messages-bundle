@@ -8,8 +8,8 @@ namespace Zicht\Bundle\MessagesBundle\Subscriber;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
 use Symfony\Contracts\Translation\TranslatorInterface;
-use Zicht\Bundle\MessagesBundle\Entity;
-use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper as Helper;
+use Zicht\Bundle\MessagesBundle\Entity\Message;
+use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 use Zicht\Bundle\MessagesBundle\Translation\Loader;
 
@@ -18,20 +18,9 @@ use Zicht\Bundle\MessagesBundle\Translation\Loader;
  */
 class FlushCatalogueCacheSubscriber implements EventSubscriber
 {
-    /**
-     * @var bool
-     */
     protected $isDirty;
 
-    /**
-     * @var FlushCatalogueCacheHelper
-     */
-    protected $helper;
-
-    /**
-     * @var array
-     */
-    protected $entity;
+    protected $flusher;
 
     private $loader;
 
@@ -39,17 +28,10 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
 
     private $cacheDir;
 
-    /**
-     * Construct the subscriber with the passed cachedir.
-     *
-     * @param FlushCatalogueCacheHelper $helper
-     * @param array $entities
-     */
-    public function __construct(Helper $helper, Loader $loader, TranslatorInterface $translator, string $cacheDir, $entities)
+    public function __construct(FlushCatalogueCacheHelper $flusher, Loader $loader, TranslatorInterface $translator, string $cacheDir)
     {
         $this->isDirty = false;
-        $this->helper = $helper;
-        $this->entity = $entities;
+        $this->flusher = $flusher;
         $this->loader = $loader;
         $this->translator = $translator;
         $this->cacheDir = $cacheDir;
@@ -84,8 +66,8 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
 
             foreach ($array as $obj) {
                 foreach ($obj as $element) {
-                    if ($element instanceof Entity\Message
-                        || $element instanceof Entity\MessageTranslation
+                    if ($element instanceof Message
+                        || $element instanceof MessageTranslation
                     ) {
                         $this->isDirty = true;
                         break 2;
@@ -113,7 +95,7 @@ class FlushCatalogueCacheSubscriber implements EventSubscriber
     {
         if ($this->isDirty) {
             $this->loader->setEnabled(true);
-            call_user_func($this->helper);
+            $this->flusher->__invoke();
             $this->translator->warmUp($this->cacheDir);
             $this->loader->setEnabled(false);
             $this->isDirty = false;

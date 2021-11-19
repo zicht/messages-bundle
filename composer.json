@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "php": "^7.1",
+        "php": "^7.2 || ^8.0",
         "sonata-project/admin-bundle": "^3.35",
         "symfony/yaml": "^4.4",
         "symfony/finder": "^4.4",
@@ -35,5 +35,10 @@
             ]
         }
     },
-    "license": "MIT"
+    "license": "MIT",
+    "scripts": {
+        "test": [
+            "phpunit -c phpunit.xml.dist"
+        ]
+    }
 }

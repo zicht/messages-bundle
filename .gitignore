@@ -1,3 +1,6 @@
-vendor
-.idea
-composer.lock
+/.env
+/.idea
+/.phpunit.result.cache
+/composer.lock
+/docker-compose.y*ml
+/vendor/

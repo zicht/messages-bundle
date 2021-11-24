@@ -102,19 +102,27 @@ class MessageAdmin extends AbstractAdmin
      */
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
-        $datagridMapper->add(
-            'domain',
-            null,
-            array(),
-            ChoiceType::class,
-            array('choices' => $this->messageManager->getRepository()->getDomains())
-        )
+        $datagridMapper
+            ->add(
+                'domain',
+                null,
+                array(),
+                ChoiceType::class,
+                array('choices' => $this->messageManager->getRepository()->getDomains())
+            )
             ->add(
                 'message',
                 CallbackFilter::class,
                 array(
                     'callback' => array($this, 'filteredOnTranslations')
                 )
+            )
+            ->add(
+                'status',
+                CallbackFilter::class,
+                ['callback' => [$this, 'filteredOnStatus']],
+                ChoiceType::class,
+                ['choices' => MessageTranslationAdmin::getStateChoices(), 'translation_domain' => 'admin']
             );
     }
 
@@ -147,6 +155,26 @@ class MessageAdmin extends AbstractAdmin
 
         $queryBuilder->setParameter('tr', '%' . $value['value'] . '%');
 
+        return true;
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param string $alias
+     * @param string $field
+     * @param array $value
+     * @return bool
+     */
+    public function filteredOnStatus($queryBuilder, $alias, $field, $value)
+    {
+        if (!$value['value']) {
+            return false;
+        }
+
+        $queryBuilder
+            ->leftJoin(sprintf('%s.translations', $alias), 't')
+            ->andWhere($queryBuilder->expr()->eq('t.state', ':status'))
+            ->setParameter('status', $value['value']);
         return true;
     }
 

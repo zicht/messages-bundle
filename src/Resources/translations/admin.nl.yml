@@ -9,6 +9,7 @@ breadcrumb:
 filter:
     label_domain: Vertaling domein
     label_message: Template titel
+    label_status: Status
 form:
     label_domain: Vertaling domein
     label_locale: Taal

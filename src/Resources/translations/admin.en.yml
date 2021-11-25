@@ -9,6 +9,7 @@ breadcrumb:
 filter:
     label_domain: Message domain
     label_message: Message
+    label_status: State
 form:
     label_domain: Message domain
     label_locale: Locale

@@ -21,6 +21,20 @@ use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 class MessageTranslationAdmin extends AbstractAdmin
 {
     /**
+     * Returns available states
+     *
+     * @return array
+     */
+    public static function getStateChoices()
+    {
+        return [
+            'message.state.unknown' => MessageTranslation::STATE_UNKNOWN,
+            'message.state.import' => MessageTranslation::STATE_IMPORT,
+            'message.state.user' => MessageTranslation::STATE_USER,
+        ];
+    }
+
+    /**
      * @{inheritDoc}
      */
     public function configureShowFields(ShowMapper $showMapper)
@@ -48,7 +62,7 @@ class MessageTranslationAdmin extends AbstractAdmin
                     ChoiceType::class,
                     [
                         'disabled' => true,
-                        'choices' => array_map($translate, $this->getStateChoices()),
+                        'choices' => array_map($translate, self::getStateChoices()),
                         'choice_translation_domain' => $this->translationDomain,
                     ]
                 )
@@ -69,19 +83,5 @@ class MessageTranslationAdmin extends AbstractAdmin
     public function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper->add('translation');
-    }
-
-    /**
-     * Returns available states
-     *
-     * @return array
-     */
-    protected function getStateChoices()
-    {
-        return [
-            'message.state.unknown' => MessageTranslation::STATE_UNKNOWN,
-            'message.state.import' => MessageTranslation::STATE_IMPORT,
-            'message.state.user' => MessageTranslation::STATE_USER,
-        ];
     }
 }

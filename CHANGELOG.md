@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.2.0 - 2021-12-07
+### Added
+- Support for PHP 8
+### Removed
+- Support for PHP 7.1
+
 ## 5.1.0 - 2021-11-24
 ### Added
 - State-filter on `MessageAdmin` to query the state of `MessageTranslation`

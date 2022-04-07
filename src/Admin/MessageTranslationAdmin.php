@@ -37,7 +37,7 @@ class MessageTranslationAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureShowFields(ShowMapper $showMapper)
+    public function configureShowFields(ShowMapper $showMapper): void
     {
         $showMapper->add('translation');
     }
@@ -45,9 +45,9 @@ class MessageTranslationAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureFormFields(FormMapper $formMapper)
+    public function configureFormFields(FormMapper $formMapper): void
     {
-        $translator = $this->configurationPool->getContainer()->get('translator');
+        $translator = $this->getConfigurationPool()->getContainer()->get('translator');
         $translationDomain = $this->getTranslationDomain();
         $translate = function ($value) use ($translator, $translationDomain) {
             return $translator->trans($value, [], $translationDomain);
@@ -63,7 +63,7 @@ class MessageTranslationAdmin extends AbstractAdmin
                     [
                         'disabled' => true,
                         'choices' => array_map($translate, self::getStateChoices()),
-                        'choice_translation_domain' => $this->translationDomain,
+                        'choice_translation_domain' => $this->getTranslationDomain(),
                     ]
                 )
             ->end();
@@ -72,7 +72,7 @@ class MessageTranslationAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureListFields(ListMapper $listMapper)
+    public function configureListFields(ListMapper $listMapper): void
     {
         $listMapper->addIdentifier('translation');
     }
@@ -80,7 +80,7 @@ class MessageTranslationAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureDatagridFilters(DatagridMapper $datagridMapper)
+    public function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper->add('translation');
     }

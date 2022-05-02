@@ -13,13 +13,11 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
-    /**
-     * @{inheritDoc}
-     */
+    /** {@inheritDoc} */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('zicht_messages');
+        $treeBuilder = new TreeBuilder('zicht_messages');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()

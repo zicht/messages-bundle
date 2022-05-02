@@ -1,6 +1,7 @@
 {
     "name": "zicht/messages-bundle",
     "description": "Zicht Messages bundle",
+    "license": "MIT",
     "authors": [
         {
             "name": "Zicht online",
@@ -9,10 +10,11 @@
     ],
     "require": {
         "php": "^7.2 || ^8.0",
+        "doctrine/orm": "^2.5",
         "sonata-project/admin-bundle": "^3.35",
-        "symfony/yaml": "^4.4",
+        "symfony/console": "^4.4",
         "symfony/finder": "^4.4",
-        "doctrine/orm": "^2.5"
+        "symfony/yaml": "^4.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^8"
@@ -23,19 +25,14 @@
     "minimum-stability": "stable",
     "autoload": {
         "psr-4": {
-            "Zicht\\Bundle\\MessagesBundle\\": [
-                "src/"
-            ]
+            "Zicht\\Bundle\\MessagesBundle\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Zicht\\Bundle\\MessagesBundle\\": [
-                "tests/"
-            ]
+            "Zicht\\Bundle\\MessagesBundle\\": "tests/"
         }
     },
-    "license": "MIT",
     "scripts": {
         "test": [
             "phpunit -c phpunit.xml.dist"

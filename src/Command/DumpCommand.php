@@ -5,7 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,7 +16,7 @@ use Zicht\Bundle\MessagesBundle\Translation\Loader;
 /**
  * Add a message to the database message catalogue.
  */
-class DumpCommand extends ContainerAwareCommand
+class DumpCommand extends Command
 {
     protected static $defaultName = 'zicht:messages:dump';
 
@@ -29,9 +29,7 @@ class DumpCommand extends ContainerAwareCommand
         $this->loader = $loader;
     }
 
-    /**
-     * @{inheritDoc}
-     */
+    /** {@inheritDoc} */
     public function configure()
     {
         $this
@@ -41,14 +39,10 @@ class DumpCommand extends ContainerAwareCommand
             ->addOption('format', '', InputOption::VALUE_REQUIRED, 'The output format to use', 'yml');
     }
 
-    /**
-     * @{inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        /** @var $loader \Zicht\Bundle\MessagesBundle\Translation\Loader */
-        $loader = $this->loader;
-        $catalogue = $loader->load('', $input->getArgument('locale'), $input->getArgument('domain'));
+        $catalogue = $this->loader->load('', $input->getArgument('locale'), $input->getArgument('domain'));
 
         $messages = $catalogue->all($input->getArgument('domain'));
 

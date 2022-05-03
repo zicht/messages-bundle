@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.2.1 - 2022-05-02
+### Fixed
+- Fixed commands
+- Pass root name to TreeBuilder constructor and call `getRootNode` instead of deprecated `->root()`
+
 ## 5.2.0 - 2021-12-07
 ### Added
 - Support for PHP 8

@@ -10,22 +10,15 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\File\File;
-use Symfony\Component\Translation\Loader\ArrayLoader;
-use Symfony\Component\Translation\Util\XliffUtils;
-use Symfony\Component\Yaml\Yaml;
-use Zicht\Bundle\MessagesBundle\Translator\BatchTranslatorInterface;
 use Zicht\Bundle\MessagesBundle\Translator\MessageTranslator;
-use Zicht\Bundle\MessagesBundle\Translator\Replacer;
 
 class TranslateCommand extends Command
 {
     /** @var string */
     protected static $defaultName = 'zicht:messages:translate';
-    /**
-     * @var MessageTranslator
-     */
+
+    /** @var MessageTranslator */
     private $translator;
 
     public function __construct(MessageTranslator $translator, string $name = null)
@@ -34,9 +27,7 @@ class TranslateCommand extends Command
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected function configure()
     {
         $this
@@ -45,9 +36,7 @@ class TranslateCommand extends Command
             ->addOption('--target', '-t', InputOption::VALUE_OPTIONAL, 'The target-language. Override if auto-discovered target is not in line with your translation API specs.');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->translator->translate(new File($input->getArgument('file')), $input->getOption('source'), $input->getOption('target'));

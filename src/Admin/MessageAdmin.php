@@ -106,9 +106,10 @@ class MessageAdmin extends AbstractAdmin
             ->add(
                 'domain',
                 null,
-                array(),
-                ChoiceType::class,
-                array('choices' => $this->messageManager->getRepository()->getDomains())
+                [
+                    'field_type' => ChoiceType::class,
+                    'field_options' => ['choices' => $this->messageManager->getRepository()->getDomains()],
+                ]
             )
             ->add(
                 'message',
@@ -120,9 +121,7 @@ class MessageAdmin extends AbstractAdmin
             ->add(
                 'status',
                 CallbackFilter::class,
-                ['callback' => [$this, 'filteredOnStatus']],
-                ChoiceType::class,
-                ['choices' => MessageTranslationAdmin::getStateChoices(), 'translation_domain' => 'admin']
+                ['callback' => [$this, 'filteredOnStatus'], 'field_type' => ChoiceType::class, 'field_options' => ['choices' => MessageTranslationAdmin::getStateChoices(), 'translation_domain' => 'admin']],
             );
     }
 

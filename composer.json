@@ -13,7 +13,6 @@
         "doctrine/orm": "^2.5",
         "sonata-project/admin-bundle": "^3.35 || ^4",
         "symfony/console": "^4.4",
-        "symfony/yaml": "^4.4",
         "symfony/finder": "^4.4",
         "symfony/yaml": "^4.4"
     },

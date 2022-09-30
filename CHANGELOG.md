@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.2.2 - 2022-09-30
+### Changed
+- Start using recommended `SymfonyStyle` for output in `LoadCommand`
+
 ## 5.2.1 - 2022-05-02
 ### Fixed
 - Fixed commands

@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Translation\Loader\PhpFileLoader;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
@@ -57,6 +58,7 @@ class LoadCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $io = new SymfonyStyle($input, $output);
         $files = $input->getArgument('file');
         $isSync = $input->getOption('sync');
         $overwrite = array(
@@ -74,24 +76,23 @@ class LoadCommand extends Command
         $totalNumUpdated = 0;
         $totalNumLoaded = 0;
 
-        $progress = new ProgressBar($output, sizeof($files));
+        $progress = new ProgressBar($io, sizeof($files));
         $progress->setRedrawFrequency(10);
 
         $messageManager->transactional(
-            function () use ($files, $isSync, $loaders, $overwrite, $output, $progress, $messageManager, &$totalNumUpdated, &$totalNumLoaded) {
+            function () use ($files, $isSync, $loaders, $overwrite, $io, $progress, $messageManager, &$totalNumUpdated, &$totalNumLoaded) {
                 foreach ($files as $filename) {
                     $ext = pathinfo($filename, PATHINFO_EXTENSION);
-
                     if (!array_key_exists($ext, $loaders) || !preg_match('/(.*)\.(\w+)\.[^.]+/', basename($filename), $m)) {
-                        $output->writeln('Unsupported file type: ' . $filename);
+                        $io->warning('Unsupported file type: ' . $filename);
                     } else {
                         $catalogue = $loaders[$ext]->load($filename, $m[2], $m[1]);
 
                         list($numLoaded, $numUpdated) = $messageManager->loadMessages(
                             $catalogue,
                             $overwrite,
-                            function ($e, $key) use ($output) {
-                                $output->writeln(sprintf("<error>%s</error> while processing message %s\n", $e->getMessage(), $key));
+                            function ($e, $key) use ($io) {
+                                $io->error(sprintf("%s while processing message %s", $e->getMessage(), $key));
                             },
                             MessageTranslation::STATE_IMPORT
                         );
@@ -101,7 +102,7 @@ class LoadCommand extends Command
 
                         if ($isSync) {
                             list($import, $user) = $messageManager->syncState($catalogue);
-                            $output->writeln(sprintf('    (synced state: <info>%d</info> set to \'import\'; <info>%d</info> set to \'user\')', $import, $user));
+                            $io->success(sprintf('synced state: %d set to \'import\'; %d set to \'user\'', $import, $user));
                         }
                     }
                 }
@@ -109,7 +110,7 @@ class LoadCommand extends Command
         );
 
         $progress->finish();
-        $output->writeln(sprintf("\n<info>%d/%d</info> messages updated/loaded from <info>%d</info> files", $totalNumUpdated, $totalNumLoaded, sizeof($files)));
+        $io->success(sprintf("%d/%d messages updated/loaded from %d files", $totalNumUpdated, $totalNumLoaded, sizeof($files)));
 
         if ($totalNumUpdated > 0) {
             $cacheHelper();

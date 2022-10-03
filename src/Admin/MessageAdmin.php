@@ -39,7 +39,7 @@ class MessageAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureShowFields(ShowMapper $showMapper)
+    public function configureShowFields(ShowMapper $show): void
     {
         $showMapper->add('message');
     }
@@ -47,7 +47,7 @@ class MessageAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureFormFields(FormMapper $formMapper)
+    public function configureFormFields(FormMapper $formMapper): void
     {
         // add the collection type for existing messages.
         $formMapper->with('admin.tab.general')
@@ -78,7 +78,7 @@ class MessageAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureListFields(ListMapper $listMapper)
+    public function configureListFields(ListMapper $listMapper): void
     {
         $listMapper
             ->addIdentifier('message')
@@ -100,15 +100,16 @@ class MessageAdmin extends AbstractAdmin
     /**
      * @{inheritDoc}
      */
-    public function configureDatagridFilters(DatagridMapper $datagridMapper)
+    public function configureDatagridFilters(DatagridMapper $datagridMapper): void
     {
         $datagridMapper
             ->add(
                 'domain',
                 null,
-                array(),
-                ChoiceType::class,
-                array('choices' => $this->messageManager->getRepository()->getDomains())
+                [
+                    'field_type' => ChoiceType::class,
+                    'field_options' => ['choices' => $this->messageManager->getRepository()->getDomains()],
+                ]
             )
             ->add(
                 'message',
@@ -120,9 +121,7 @@ class MessageAdmin extends AbstractAdmin
             ->add(
                 'status',
                 CallbackFilter::class,
-                ['callback' => [$this, 'filteredOnStatus']],
-                ChoiceType::class,
-                ['choices' => MessageTranslationAdmin::getStateChoices(), 'translation_domain' => 'admin']
+                ['callback' => [$this, 'filteredOnStatus'], 'field_type' => ChoiceType::class, 'field_options' => ['choices' => MessageTranslationAdmin::getStateChoices(), 'translation_domain' => 'admin']],
             );
     }
 
@@ -183,7 +182,7 @@ class MessageAdmin extends AbstractAdmin
      *
      * @param Message $object
      */
-    public function prePersist($object)
+    public function prePersist(object $object): void
     {
         $this->preUpdate($object);
     }
@@ -193,7 +192,7 @@ class MessageAdmin extends AbstractAdmin
      *
      * @param Message $object
      */
-    public function preUpdate($object)
+    public function preUpdate(object $object): void
     {
         $this->messageManager->addMissingTranslations($object);
         foreach ($object->getTranslations() as $translation) {

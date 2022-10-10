@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.3.1 - 2022-10-10
+### Fixed
+- Reverted Sonata 4 forwards compatibility due to unforseen issues.
+
 ## 5.3.0 - 2022-10-03
 ### Fixed
 - Fixed admin code to be forward compatible with Sonata Admin v4.

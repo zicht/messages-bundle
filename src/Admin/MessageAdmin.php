@@ -41,7 +41,7 @@ class MessageAdmin extends AbstractAdmin
      */
     public function configureShowFields(ShowMapper $show): void
     {
-        $showMapper->add('message');
+        $show->add('message');
     }
 
     /**
@@ -182,7 +182,7 @@ class MessageAdmin extends AbstractAdmin
      *
      * @param Message $object
      */
-    public function prePersist(object $object): void
+    public function prePersist($object)
     {
         $this->preUpdate($object);
     }
@@ -192,7 +192,7 @@ class MessageAdmin extends AbstractAdmin
      *
      * @param Message $object
      */
-    public function preUpdate(object $object): void
+    public function preUpdate($object)
     {
         $this->messageManager->addMissingTranslations($object);
         foreach ($object->getTranslations() as $translation) {

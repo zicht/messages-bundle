@@ -7,7 +7,6 @@
                  label_translator_strategy="sonata.admin.label.strategy.underscore"/>
             <argument/>
             <argument>%zicht_messages.entity%</argument>
-            <argument>SonataAdminBundle:CRUD</argument>
             <call method="addChild">
                 <argument type="service" id="zicht_messages.admin.message_translation"/>
                 <argument>translations</argument>
@@ -22,7 +21,6 @@
                  label_translator_strategy="sonata.admin.label.strategy.underscore"/>
             <argument/>
             <argument>Zicht\Bundle\MessagesBundle\Entity\MessageTranslation</argument>
-            <argument>SonataAdminBundle:CRUD</argument>
             <call method="setTranslator">
                 <argument type="service" id="translator"/>
             </call>

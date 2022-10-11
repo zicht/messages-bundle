@@ -182,7 +182,7 @@ class MessageAdmin extends AbstractAdmin
      *
      * @param Message $object
      */
-    public function prePersist($object)
+    public function prePersist(object $object): void
     {
         $this->preUpdate($object);
     }
@@ -192,7 +192,7 @@ class MessageAdmin extends AbstractAdmin
      *
      * @param Message $object
      */
-    public function preUpdate($object)
+    public function preUpdate(object $object): void
     {
         $this->messageManager->addMissingTranslations($object);
         foreach ($object->getTranslations() as $translation) {

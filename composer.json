@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "doctrine/orm": "^2.5",
         "sonata-project/admin-bundle": "^4",
         "symfony/console": "^4.4",

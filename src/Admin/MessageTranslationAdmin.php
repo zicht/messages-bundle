@@ -47,12 +47,6 @@ class MessageTranslationAdmin extends AbstractAdmin
      */
     public function configureFormFields(FormMapper $formMapper): void
     {
-        $translator = $this->getConfigurationPool()->getContainer()->get('translator');
-        $translationDomain = $this->getTranslationDomain();
-        $translate = function ($value) use ($translator, $translationDomain) {
-            return $translator->trans($value, [], $translationDomain);
-        };
-
         $formMapper
             ->with('General')
                 ->add('locale', null, ['required' => true])
@@ -62,7 +56,7 @@ class MessageTranslationAdmin extends AbstractAdmin
                     ChoiceType::class,
                     [
                         'disabled' => true,
-                        'choices' => array_map($translate, self::getStateChoices()),
+                        'choices' => self::getStateChoices(),
                         'choice_translation_domain' => $this->getTranslationDomain(),
                     ]
                 )

@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 7.0.0 - 2022-10-11
+### Added
+- Support for Symfony 5
+### Removed
+- Support for Symfony 4
+
 ## 6.0.1 - 2022-11-09
 ## Fixed
 - Calling removed `getContainer()` method on `configurationPool`. Also the intended working is already done by default.

@@ -27,7 +27,6 @@ class TranslateCommand extends Command
         $this->translator = $translator;
     }
 
-    /** {@inheritDoc} */
     protected function configure()
     {
         $this
@@ -36,9 +35,10 @@ class TranslateCommand extends Command
             ->addOption('--target', '-t', InputOption::VALUE_OPTIONAL, 'The target-language. Override if auto-discovered target is not in line with your translation API specs.');
     }
 
-    /** {@inheritDoc} */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->translator->translate(new File($input->getArgument('file')), $input->getOption('source'), $input->getOption('target'));
+
+        return 0;
     }
 }

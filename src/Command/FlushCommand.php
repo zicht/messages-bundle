@@ -27,20 +27,13 @@ class FlushCommand extends Command
         $this->cacheDir = $cacheDir;
     }
 
-
-    /**
-     * @{inheritDoc}
-     */
     protected function configure()
     {
         $this
             ->setDescription('Flush symfony\'s message catalogue cache');
     }
 
-    /**
-     * @{inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $cacheDir = $this->cacheDir . '/translations';
 
@@ -54,5 +47,7 @@ class FlushCommand extends Command
                 $output->writeln("Nothing to flush");
             }
         }
+
+        return 0;
     }
 }

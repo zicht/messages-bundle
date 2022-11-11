@@ -29,7 +29,6 @@ class DumpCommand extends Command
         $this->loader = $loader;
     }
 
-    /** {@inheritDoc} */
     public function configure()
     {
         $this
@@ -39,8 +38,7 @@ class DumpCommand extends Command
             ->addOption('format', '', InputOption::VALUE_REQUIRED, 'The output format to use', 'yml');
     }
 
-    /** {@inheritDoc} */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $catalogue = $this->loader->load('', $input->getArgument('locale'), $input->getArgument('domain'));
 
@@ -60,5 +58,7 @@ class DumpCommand extends Command
             default:
                 $output->writeln('<error>Invalid format supplied, currently only `yml` and `php` are supported</error>');
         }
+
+        return 0;
     }
 }

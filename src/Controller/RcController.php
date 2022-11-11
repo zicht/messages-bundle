@@ -5,14 +5,12 @@
 
 namespace Zicht\Bundle\MessagesBundle\Controller;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 
 /**
- * Class RcController
- *
- * @Route(service="zicht_messages.controller.rc")
+ * @Route("zicht_messages")
  */
 class RcController
 {
@@ -20,8 +18,6 @@ class RcController
     protected $cacheDir;
 
     /**
-     * RcController constructor.
-     *
      * @param string $cacheDir
      */
     public function __construct($cacheDir)
@@ -31,7 +27,6 @@ class RcController
 
     /**
      * @return JsonResponse
-     *
      * @Route("/rc")
      */
     public function flushAction()

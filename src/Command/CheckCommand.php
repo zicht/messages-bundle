@@ -33,9 +33,6 @@ class CheckCommand extends Command
         $this->projectDir = $projectDir;
     }
 
-    /**
-     * @{inheritDoc}
-     */
     protected function configure()
     {
         $this
@@ -43,10 +40,7 @@ class CheckCommand extends Command
             ->addOption('fix', '', InputOption::VALUE_NONE, 'Try to fix whatever can be fixed');
     }
 
-    /**
-     * @{inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $issues = $this->messagesManager->check(
             $this->translator,
@@ -63,5 +57,7 @@ class CheckCommand extends Command
             }
             $output->writeln("\nPlease remember to flush the cache after any changes you make");
         }
+
+        return 0;
     }
 }

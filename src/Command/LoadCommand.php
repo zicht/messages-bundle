@@ -38,9 +38,6 @@ class LoadCommand extends Command
         $this->cacheHelper = $cacheHelper;
     }
 
-    /**
-     * @{inheritDoc}
-     */
     protected function configure()
     {
         $this
@@ -53,10 +50,7 @@ class LoadCommand extends Command
             ->addOption('overwrite', null, null, 'The same as --overwrite-unknown, --overwrite-import, and --overwrite-user');
     }
 
-    /**
-     * @{inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new SymfonyStyle($input, $output);
         $files = $input->getArgument('file');
@@ -115,5 +109,7 @@ class LoadCommand extends Command
         if ($totalNumUpdated > 0) {
             $cacheHelper();
         }
+
+        return 0;
     }
 }

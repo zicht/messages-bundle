@@ -30,9 +30,6 @@ class AddCommand extends Command
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * @{inheritDoc}
-     */
     protected function configure()
     {
         $this
@@ -48,10 +45,7 @@ class AddCommand extends Command
             );
     }
 
-    /**
-     * @{inheritDoc}
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $message = new Message();
         $message->message = $input->getArgument('message');
@@ -66,5 +60,7 @@ class AddCommand extends Command
         }
         $this->doctrine->getManager()->persist($message);
         $this->doctrine->getManager()->flush();
+
+        return 0;
     }
 }

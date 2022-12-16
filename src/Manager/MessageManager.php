@@ -203,19 +203,17 @@ class MessageManager
             foreach ($messages as $key => $translation) {
                 try {
                     if (false !== $mid = $messageSelect->executeQuery(array($key, $domain))->fetchOne()) {
-                        //if (false !== ($mid = $messageSelect->fetchColumn(0))) {
                         $ret = $translationSelect->executeQuery(array($mid, $catalogue->getLocale()))->fetchAllNumeric();
                         if (!empty($ret)) {
                             [$tid, $translationState] = array_values(current($ret));
                             if (!empty($overwrite[$translationState])) {
-                                $translationUpdate->execute(array($catalogue->getLocale(), $translation, $state, $tid, $mid));
-                                $updated += $translationUpdate->rowCount();
+                                $updated += $translationUpdate->executeQuery(array($catalogue->getLocale(), $translation, $state, $tid, $mid))->rowCount();
                             }
                         } else {
                             $updated += $translationInsert->executeQuery(array($mid, $catalogue->getLocale(), $translation, $state))->rowCount();
                         }
                     } else {
-                        $messageInsert->execute(array($key, $domain));
+                        $messageInsert->executeQuery(array($key, $domain));
                         $mid = $conn->lastInsertId();
                         $updated += $translationInsert->executeQuery(array($mid, $catalogue->getLocale(), $translation, $state))->rowCount();
                     }

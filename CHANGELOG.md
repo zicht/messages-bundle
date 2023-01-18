@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 6.0.2 - 2023-01-18
+### Fixed
+- Handling custom filtering in `MessageAdmin`
+
 ## 6.0.1 - 2022-11-09
 ## Fixed
 - Calling removed `getContainer()` method on `configurationPool`. Also the intended working is already done by default.

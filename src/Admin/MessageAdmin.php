@@ -8,6 +8,7 @@ namespace Zicht\Bundle\MessagesBundle\Admin;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
+use Sonata\AdminBundle\Filter\Model\FilterData;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Show\ShowMapper;
 use Sonata\DoctrineORMAdminBundle\Filter\CallbackFilter;
@@ -133,14 +134,14 @@ class MessageAdmin extends AbstractAdmin
      * @param \Doctrine\ORM\QueryBuilder $queryBuilder
      * @param string $alias
      * @param string $field
-     * @param array $value
+     * @param FilterData $value
      *
      * @return bool
      */
     public function filteredOnTranslations($queryBuilder, $alias, $field, $value)
     {
-        if (!$value['value']) {
-            return false;
+        if (!$value->getValue()) {
+            return;
         }
 
         $queryBuilder->leftJoin(sprintf('%s.translations', $alias), 't');
@@ -152,7 +153,7 @@ class MessageAdmin extends AbstractAdmin
             )
         );
 
-        $queryBuilder->setParameter('tr', '%' . $value['value'] . '%');
+        $queryBuilder->setParameter('tr', '%' . $value->getValue() . '%');
 
         return true;
     }
@@ -161,19 +162,19 @@ class MessageAdmin extends AbstractAdmin
      * @param QueryBuilder $queryBuilder
      * @param string $alias
      * @param string $field
-     * @param array $value
+     * @param FilterData $value
      * @return bool
      */
     public function filteredOnStatus($queryBuilder, $alias, $field, $value)
     {
-        if (!$value['value']) {
-            return false;
+        if (!$value->getValue()) {
+            return;
         }
 
         $queryBuilder
             ->leftJoin(sprintf('%s.translations', $alias), 't')
             ->andWhere($queryBuilder->expr()->eq('t.state', ':status'))
-            ->setParameter('status', $value['value']);
+            ->setParameter('status', $value->getValue());
         return true;
     }
 

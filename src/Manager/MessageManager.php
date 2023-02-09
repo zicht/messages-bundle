@@ -202,25 +202,20 @@ class MessageManager
             $loaded += count($messages);
             foreach ($messages as $key => $translation) {
                 try {
-                    $messageSelect->execute(array($key, $domain));
-                    if (false !== ($mid = $messageSelect->fetchColumn(0))) {
-                        $translationSelect->execute(array($mid, $catalogue->getLocale()));
-                        $ret = $translationSelect->fetchAll();
+                    if (false !== $mid = $messageSelect->executeQuery(array($key, $domain))->fetchOne()) {
+                        $ret = $translationSelect->executeQuery(array($mid, $catalogue->getLocale()))->fetchAllNumeric();
                         if (!empty($ret)) {
                             [$tid, $translationState] = array_values(current($ret));
                             if (!empty($overwrite[$translationState])) {
-                                $translationUpdate->execute(array($catalogue->getLocale(), $translation, $state, $tid, $mid));
-                                $updated += $translationUpdate->rowCount();
+                                $updated += $translationUpdate->executeQuery(array($catalogue->getLocale(), $translation, $state, $tid, $mid))->rowCount();
                             }
                         } else {
-                            $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
-                            $updated += $translationInsert->rowCount();
+                            $updated += $translationInsert->executeQuery(array($mid, $catalogue->getLocale(), $translation, $state))->rowCount();
                         }
                     } else {
-                        $messageInsert->execute(array($key, $domain));
+                        $messageInsert->executeQuery(array($key, $domain));
                         $mid = $conn->lastInsertId();
-                        $translationInsert->execute(array($mid, $catalogue->getLocale(), $translation, $state));
-                        $updated += $translationInsert->rowCount();
+                        $updated += $translationInsert->executeQuery(array($mid, $catalogue->getLocale(), $translation, $state))->rowCount();
                     }
                 } catch (\Exception $e) {
                     if (is_callable($onError)) {

@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 5.3.2 - 2022-10-10
+### Fixed
+- Error when using 3 filters simultaneously
+
 ## 5.3.1 - 2022-10-10
 ### Fixed
 - Reverted Sonata 4 forwards compatibility due to unforseen issues.

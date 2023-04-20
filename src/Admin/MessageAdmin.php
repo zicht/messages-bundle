@@ -144,12 +144,12 @@ class MessageAdmin extends AbstractAdmin
             return;
         }
 
-        $queryBuilder->leftJoin(sprintf('%s.translations', $alias), 't');
+        $queryBuilder->leftJoin(sprintf('%s.translations', $alias), 't1');
 
         $queryBuilder->andWhere(
             $queryBuilder->expr()->orX(
                 $queryBuilder->expr()->like('o.message', ':tr'),
-                $queryBuilder->expr()->like('t.translation', ':tr')
+                $queryBuilder->expr()->like('t1.translation', ':tr')
             )
         );
 
@@ -172,9 +172,9 @@ class MessageAdmin extends AbstractAdmin
         }
 
         $queryBuilder
-            ->leftJoin(sprintf('%s.translations', $alias), 't')
-            ->andWhere($queryBuilder->expr()->eq('t.state', ':status'))
-            ->setParameter('status', $value->getValue());
+            ->leftJoin(sprintf('%s.translations', $alias), 't2')
+            ->andWhere($queryBuilder->expr()->eq('t2.state', ':status'))
+            ->setParameter('status', $value['value']);
         return true;
     }
 

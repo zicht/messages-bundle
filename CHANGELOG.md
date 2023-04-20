@@ -37,6 +37,10 @@ Nothing so far
 - Support for Sonata Admin ^3
 - Support for PHP 7.2/7.3
 
+## 5.3.2 - 2022-10-10
+### Fixed
+- Error when using 3 filters simultaneously
+
 ## 5.3.1 - 2022-10-10
 ### Fixed
 - Reverted Sonata 4 forwards compatibility due to unforseen issues.

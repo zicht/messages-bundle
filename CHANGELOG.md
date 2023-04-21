@@ -22,6 +22,14 @@ Nothing so far
 ### Removed
 - Support for Symfony 4
 
+## 6.0.4 - 2023-04-20
+### Fixed
+- Forgot to adjust Changelog
+
+## 6.0.3 - 2023-04-20
+### Fixed
+- Forward merge from 5.3.2
+
 ## 6.0.2 - 2023-01-18
 ### Fixed
 - Handling custom filtering in `MessageAdmin`

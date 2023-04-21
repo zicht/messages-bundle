@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added|Changed|Deprecated|Removed|Fixed|Security
 Nothing so far
 
+## 7.1.1 - 2023-04-21
+### Fixed
+- Forward merge from 6.0.4
+
 ## 7.1.0 - 2022-12-07
 ### Added
 - Support for `doctrine/dbal ^3`
@@ -21,6 +25,14 @@ Nothing so far
 - Support for Symfony 5
 ### Removed
 - Support for Symfony 4
+
+## 6.0.4 - 2023-04-20
+### Fixed
+- Forgot to adjust Changelog
+
+## 6.0.3 - 2023-04-20
+### Fixed
+- Forward merge from 5.3.2
 
 ## 6.0.2 - 2023-01-18
 ### Fixed
@@ -36,6 +48,10 @@ Nothing so far
 ### Removed
 - Support for Sonata Admin ^3
 - Support for PHP 7.2/7.3
+
+## 5.3.2 - 2022-10-10
+### Fixed
+- Error when using 3 filters simultaneously
 
 ## 5.3.1 - 2022-10-10
 ### Fixed

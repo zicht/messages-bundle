@@ -1,17 +1,10 @@
 <?php
-/**
- * @copyright Zicht Online <http://zicht.nl>
- */
+
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
-/**
- * Class MessageRepository
- *
- * @package Zicht\Bundle\MessagesBundle\Entity
- */
 class MessageRepository extends EntityRepository implements TranslationsRepository
 {
     /**

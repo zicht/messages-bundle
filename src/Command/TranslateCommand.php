@@ -5,6 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,13 +14,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Zicht\Bundle\MessagesBundle\Translator\MessageTranslator;
 
+#[AsCommand('zicht:messages:translate')]
 class TranslateCommand extends Command
 {
-    /** @var string */
-    protected static $defaultName = 'zicht:messages:translate';
-
-    /** @var MessageTranslator */
-    private $translator;
+    private MessageTranslator $translator;
 
     public function __construct(MessageTranslator $translator, string $name = null)
     {
@@ -39,6 +37,6 @@ class TranslateCommand extends Command
     {
         $this->translator->translate(new File($input->getArgument('file')), $input->getOption('source'), $input->getOption('target'));
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

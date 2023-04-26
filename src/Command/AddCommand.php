@@ -6,6 +6,7 @@
 namespace Zicht\Bundle\MessagesBundle\Command;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,12 +18,10 @@ use Zicht\Bundle\MessagesBundle\Entity\MessageTranslation;
 /**
  * Add a message to the database message catalogue.
  */
+#[AsCommand('zicht:messages:add')]
 class AddCommand extends Command
 {
-    protected static $defaultName = 'zicht:messages:add';
-
-    /** @var ManagerRegistry */
-    private $doctrine;
+    private ManagerRegistry $doctrine;
 
     public function __construct(ManagerRegistry $doctrine, string $name = null)
     {
@@ -61,6 +60,6 @@ class AddCommand extends Command
         $this->doctrine->getManager()->persist($message);
         $this->doctrine->getManager()->flush();
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

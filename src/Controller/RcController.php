@@ -1,17 +1,12 @@
 <?php
-/**
- * @copyright Zicht Online <http://zicht.nl>
- */
 
 namespace Zicht\Bundle\MessagesBundle\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
 
-/**
- * @Route("zicht_messages")
- */
+#[Route('zicht_messages')]
 class RcController
 {
     /** @var string */
@@ -25,11 +20,8 @@ class RcController
         $this->cacheDir = $cacheDir;
     }
 
-    /**
-     * @return JsonResponse
-     * @Route("/rc")
-     */
-    public function flushAction()
+    #[Route('/rc')]
+    public function flushAction(): JsonResponse
     {
         $helper = new FlushCatalogueCacheHelper($this->cacheDir);
         $removedCount = $helper();

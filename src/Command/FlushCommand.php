@@ -5,6 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -14,12 +15,10 @@ use Zicht\Bundle\MessagesBundle\Helper\FlushCatalogueCacheHelper;
  * This command checks if the guids that are present in the local database correspond with the guids that are used
  * in SRO
  */
+#[AsCommand('zicht:messages:flush')]
 class FlushCommand extends Command
 {
-    protected static $defaultName = 'zicht:messages:flush';
-
-    /** @var string */
-    private $cacheDir;
+    private string $cacheDir;
 
     public function __construct(string $cacheDir, string $name = null)
     {
@@ -48,6 +47,6 @@ class FlushCommand extends Command
             }
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

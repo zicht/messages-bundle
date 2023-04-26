@@ -5,6 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,12 +17,10 @@ use Zicht\Bundle\MessagesBundle\Translation\Loader;
 /**
  * Add a message to the database message catalogue.
  */
+#[AsCommand('zicht:messages:dump')]
 class DumpCommand extends Command
 {
-    protected static $defaultName = 'zicht:messages:dump';
-
-    /** @var Loader */
-    private $loader;
+    private Loader $loader;
 
     public function __construct(Loader $loader, string $name = null)
     {
@@ -59,6 +58,6 @@ class DumpCommand extends Command
                 $output->writeln('<error>Invalid format supplied, currently only `yml` and `php` are supported</error>');
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

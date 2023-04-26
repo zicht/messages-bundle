@@ -1,68 +1,45 @@
 <?php
-/**
- * @copyright Zicht Online <http://zicht.nl>
- */
 
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Translation entity
- *
- * @ORM\Entity
- * @ORM\Table(name="message_translation", uniqueConstraints={
- *  @ORM\UniqueConstraint(
- *    name="message_translation_idx",
- *    columns={"message_id", "locale"}
- *  )
- * })
- */
+#[ORM\Entity]
+#[ORM\Table(name: 'message_translation')]
+#[ORM\UniqueConstraint(name: 'message_translation_idx', columns: ['message_id', 'locale'])]
 class MessageTranslation
 {
-    /**
-     * Unknown state
-     */
+    /** Unknown state */
     const STATE_UNKNOWN = 'unknown';
 
-    /**
-     * Import state
-     */
+    /** Import state */
     const STATE_IMPORT = 'import';
 
-    /**
-     * User state
-     */
+    /** User state */
     const STATE_USER = 'user';
 
-    /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
+    /** @var int */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     protected $message_translation_id;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    /** @var int */
+    #[ORM\Column(type: 'integer')]
     protected $message_id;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Zicht\Bundle\MessagesBundle\Entity\Message", inversedBy="translations")
-     * @ORM\JoinColumn(name="message_id", referencedColumnName="id", onDelete="CASCADE")
-     */
+    /** @var Message */
+    #[ORM\ManyToOne(targetEntity: Message::class, inversedBy: 'translations')]
+    #[ORM\JoinColumn(name: 'message_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     public $message;
 
-    /**
-     * @ORM\Column(type="string", length=8);
-     */
+    /** @var string */
+    #[ORM\Column(type: 'string', length: 8)]
     public $locale;
 
-    /**
-     * @ORM\Column(type="text")
-     */
+    /** @var string */
+    #[ORM\Column(type: 'text')]
     public $translation  = '';
-
 
     /**
      * Indicates the state of the message: unknown, import, user.
@@ -72,13 +49,11 @@ class MessageTranslation
      * is modified by the user, the import should no longer (automatically) overwrite its value.
      *
      * @var string
-     * @ORM\Column(type="string", length=8, nullable=false)
      */
+    #[ORM\Column(type: 'string', length: 8)]
     public $state = MessageTranslation::STATE_UNKNOWN;
 
     /**
-     * Constructor.
-     *
      * @param string $locale
      * @param string $translation
      * @param string $state
@@ -90,10 +65,7 @@ class MessageTranslation
         $this->state = $state;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->translation;
     }

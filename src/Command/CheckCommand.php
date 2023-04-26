@@ -5,6 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -15,15 +16,14 @@ use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 /**
  * Checks all translations in the database (self test)
  */
+#[AsCommand('zicht:messages:check')]
 class CheckCommand extends Command
 {
-    protected static $defaultName = 'zicht:messages:check';
+    private MessageManager $messagesManager;
 
-    private $messagesManager;
+    private TranslatorInterface $translator;
 
-    private $translator;
-
-    private $projectDir;
+    private string $projectDir;
 
     public function __construct(MessageManager $messageManager, TranslatorInterface $translator, string $projectDir, string $name = null)
     {
@@ -58,6 +58,6 @@ class CheckCommand extends Command
             $output->writeln("\nPlease remember to flush the cache after any changes you make");
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

@@ -1,77 +1,44 @@
 <?php
-/**
- * @copyright Zicht Online <http://zicht.nl>
- */
 
 namespace Zicht\Bundle\MessagesBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * Message entity
- *
- * @ORM\Entity(repositoryClass="Zicht\Bundle\MessagesBundle\Entity\MessageRepository")
- * @ORM\Table(
- *    name="message",
- *    uniqueConstraints={
- *       @ORM\UniqueConstraint(
- *          name="message_idx",
- *          columns={"message", "domain"}
- *       )
- *    }
- * )
- */
+#[ORM\Entity(repositoryClass: MessageRepository::class)]
+#[ORM\Table(name: 'message')]
+#[ORM\UniqueConstraint(name: 'message_idx', columns: ['message', 'domain'])]
 class Message
 {
-    /**
-     * @var integer
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO");
-     * @ORM\Column(type="integer")
-     */
+    /** @var int */
+    #[ORM\Id]
+    #[ORM\GeneratedValue(strategy: 'AUTO')]
+    #[ORM\Column(type: 'integer')]
     protected $id;
 
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=255)
-     */
+    /** @var string */
+    #[ORM\Column(type: 'string')]
     public $message;
 
-    /**
-     * @var string
-     * @ORM\Column(type="string", length=64)
-     */
+    /** @var string */
+    #[ORM\Column(type: 'string', length: 64)]
     public $domain = 'messages';
 
-    /**
-     * @ORM\OneToMany(
-     *     targetEntity="Zicht\Bundle\MessagesBundle\Entity\MessageTranslation",
-     *     mappedBy="message",
-     *     cascade={"persist", "remove"},
-     *     orphanRemoval=true
-     * )
-     */
+    /** @var Collection<int, MessageTranslation> */
+    #[ORM\OneToMany(targetEntity: MessageTranslation::class, mappedBy: 'message', cascade: ['persist', 'remove'], orphanRemoval: true)]
     public $translations;
 
-    /**
-     * Constructor
-     */
     public function __construct()
     {
         $this->translations = new ArrayCollection();
     }
 
-
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('%s [%d]', (string)$this->message, $this->id);
     }
-
 
     /**
      * @return mixed
@@ -81,15 +48,13 @@ class Message
         return $this->message;
     }
 
-
     /**
-     * @return ArrayCollection
+     * @return Collection<int, MessageTranslation>
      */
     public function getTranslations()
     {
         return $this->translations;
     }
-
 
     /**
      * Checks if the translation for the specified locale exists.
@@ -106,7 +71,6 @@ class Message
         }
         return false;
     }
-
 
     /**
      * Adds missing translations
@@ -136,7 +100,6 @@ class Message
         return $this->hasTranslation($locale);
     }
 
-
     /**
      * Add a translation
      *
@@ -148,7 +111,6 @@ class Message
         $translation->message = $this;
         $this->translations[] = $translation;
     }
-
 
     /**
      * @return mixed
@@ -168,12 +130,15 @@ class Message
     }
 
     /**
-     * @param MessageTranslation[] $translations
+     * @param iterable<array-key, MessageTranslation> $translations
      * @return void
      */
     public function setTranslations($translations)
     {
-        $this->translations = $translations;
+        $this->translations->clear();
+        foreach ($translations as $translation) {
+            $this->addTranslations($translation);
+        }
     }
 
     /**

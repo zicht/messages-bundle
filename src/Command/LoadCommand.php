@@ -5,6 +5,7 @@
 
 namespace Zicht\Bundle\MessagesBundle\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,15 +22,12 @@ use Zicht\Bundle\MessagesBundle\Manager\MessageManager;
 /**
  * This command loads messages from predefined message configuration files.
  */
+#[AsCommand('zicht:messages:load')]
 class LoadCommand extends Command
 {
-    protected static $defaultName = 'zicht:messages:load';
+    private MessageManager $messageManager;
 
-    /** @var MessageManager */
-    private $messageManager;
-
-    /** @var FlushCatalogueCacheHelper */
-    private $cacheHelper;
+    private FlushCatalogueCacheHelper $cacheHelper;
 
     public function __construct(MessageManager $messageManager, FlushCatalogueCacheHelper $cacheHelper, string $name = null)
     {
@@ -110,6 +108,6 @@ class LoadCommand extends Command
             $cacheHelper();
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

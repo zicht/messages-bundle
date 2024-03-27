@@ -11,7 +11,7 @@ use Zicht\Bundle\MessagesBundle\DependencyInjection\Compiler\ReorderTranslationR
 
 class ZichtMessagesBundle extends Bundle
 {
-    public function build(ContainerBuilder $container)
+    public function build(ContainerBuilder $container): void
     {
         parent::build($container);
 

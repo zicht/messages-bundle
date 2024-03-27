@@ -2,6 +2,7 @@
 /**
  * @copyright Zicht Online <http://zicht.nl>
  */
+
 namespace Zicht\Bundle\MessagesBundle\Translation;
 
 use Symfony\Component\Translation\MessageCatalogue;
@@ -10,8 +11,6 @@ use Zicht\Bundle\MessagesBundle\TranslationsRepository;
 
 /**
  * Translation loader implementation
- *
- * @package Zicht\Bundle\MessagesBundle\Translation
  */
 class Loader implements LoaderInterface
 {
@@ -24,24 +23,13 @@ class Loader implements LoaderInterface
 
     /**
      * Set the repository to load the messages from.
-     *
-     * @param \Zicht\Bundle\MessagesBundle\TranslationsRepository $repo
-     * @return void
      */
-    public function setRepository(TranslationsRepository $repo)
+    public function setRepository(TranslationsRepository $repo): void
     {
         $this->repository = $repo;
     }
 
-    /**
-     * Load
-     *
-     * @param mixed $resource
-     * @param string $locale
-     * @param string $domain
-     * @return MessageCatalogue
-     */
-    public function load($resource, $locale, $domain = 'messages')
+    public function load(mixed $resource, string $locale, string $domain = 'messages'): MessageCatalogue
     {
         $catalogue = new MessageCatalogue($locale);
 
